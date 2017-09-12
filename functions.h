@@ -14,6 +14,6 @@ void Print_matrix(matrix<double> a);
 matrix<double> Construct_matrix_Laplace(int q);
 vector<double> Construct_BC(int q);
 vector<double> Construct_load(int q, double h, vector<double> bc);
-void Print_unknowns( vector<double> u);
+void Print_vectors(int q, vector<double> u);
 
 #endif //FDM_FUNCTIONS_H

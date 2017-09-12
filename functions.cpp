@@ -141,7 +141,7 @@ vector<double> Construct_BC(int q)
 }
 
 // print unknowns
-void Print_unknowns(vector<double> u)
+void Print_vectors(int q, vector<double> u)
 {
     unsigned long j=0, k=0;
     std::cout << std::endl;
@@ -149,8 +149,8 @@ void Print_unknowns(vector<double> u)
     {
         std::cout << u[i]<< " ";
 
-        if((i + 1) % (u.size() / 3 / 3) == 0) std::cout << std::endl;
-        if((i + 1) % (u.size() / 3 ) == 0) std::cout << std::endl;
+        if((i + 1) % (u.size() / q / q) == 0) std::cout << std::endl;
+        if((i + 1) % (u.size() / q ) == 0) std::cout << std::endl;
 
     }
     std::cout << std::endl;
