@@ -11,7 +11,7 @@ using namespace boost::numeric::ublas;
 
 vector<double> BiCGSTAB(matrix<double> a, vector<double> b);
 void Print_matrix(matrix<double> a);
-matrix<double> Construct_matrix(int q);
+matrix<double> Construct_matrix_Laplace(int q);
 vector<double> Construct_BC(int q);
 vector<double> Construct_load(int q, double h, vector<double> bc);
 void Print_unknowns( vector<double> u);
