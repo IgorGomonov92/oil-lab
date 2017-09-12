@@ -51,7 +51,7 @@ vector<double> BiCGSTAB(matrix<double> a, vector<double> b)
         v0 = v;
         u0 = u;
 
-    } while(norm_2(r) / norm_2(b) > 1.0e-20);
+    } while(norm_2(r) / norm_2(b) > 1.0e-5);
 
     return u;
 }
@@ -62,9 +62,9 @@ double y=0.0;
 void Print_matrix(matrix<double> a)
 {
     std::cout << std::endl;
-    for(int i=0; i<a.size1(); i++)
+    for(unsigned long i=0; i<a.size1(); i++)
     {
-        for(int j=0; j<a.size2(); j++)
+        for(unsigned long j=0; j<a.size2(); j++)
         {
 
             std::cout << a(i,j) << ' ';
@@ -81,11 +81,11 @@ matrix<double> Construct_matrix(int q)
     int n=q*q*q, row=0;
     matrix<double> a(n, n);// матрица СЛАУ
     a.clear();
-    for(int k=1; k<=q; k++)
+    for(unsigned long k=1; k<=q; k++)
     {
-        for(int j=1; j<=q; j++)
+        for(unsigned long j=1; j<=q; j++)
         {
-            for(int i=1; i<=q; i++)
+            for(unsigned long i=1; i<=q; i++)
             {
                 if (k>1)        a(row,row-q*q) = 1;
                 if (j>1)        a(row,row-q)   = 1;
@@ -96,7 +96,7 @@ matrix<double> Construct_matrix(int q)
                 if (i<q)        a(row,row+1)   = 1;
 
                 //implementing Neumann B.C.
-                if ( ((row+1) % ((q*q)) == 0 || row == 0) && k<q)      a(row,row+q*q) = 2;
+                if (k<q && row<q*q)        a(row,row+q*q) = 2;
                 row++;
             }
         }
@@ -111,10 +111,10 @@ matrix<double> Construct_matrix(int q)
 
 vector<double> Construct_load(int q, double h, vector<double> bc)
 {
-    int n=q*q*q;
+    unsigned long n=q*q*q;
     vector<double> b(n);
-    int j=0;
-    for(int i=0 ; i<n; i++)
+    unsigned long j=0;
+    for(unsigned long i=0 ; i<n; i++)
     {
         if (i % (q*q) == 0 || i == 0)    b(i) = 2*h*bc(j);
         j++;
@@ -127,9 +127,9 @@ vector<double> Construct_load(int q, double h, vector<double> bc)
 
 vector<double> Construct_BC(int q)
 {
-    int n=q*q*q;
+    unsigned long n=q*q*q;
     vector<double> bc(n);
-    for(int i=0; i<n; i++)
+    for(unsigned long i=0; i<n; i++)
     {
         bc(i) = .2;
     }
@@ -140,9 +140,9 @@ vector<double> Construct_BC(int q)
 // print unknowns
 void Print_unknowns(vector<double> u)
 {
-    int j=0, k=0;
+    unsigned long j=0, k=0;
     std::cout << std::endl;
-    for(int i=0; i<u.size(); i++)
+    for(unsigned long i=0; i<u.size(); i++)
     {
         std::cout << u[i]<< " ";
 
