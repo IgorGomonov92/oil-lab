@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     bc1 = Construct_BC_Poisson(q);
     b = Construct_load_Laplace(q, h, bc);
     a = Construct_matrix_Laplace(q);
-    b1 = Construct_load_Poisson(q, h, bc1, f);
+
     a1 = Construct_matrix_Poisson(q);
 
     // настраиваем вывод
@@ -40,6 +40,7 @@ int main(int argc, char **argv)
     #pragma omp parallel
     {
         u = BiCGSTAB(a, b); // решаем уравнение Лапласа
+        b1 = Construct_load_Poisson(q, h, bc1, f);
         u1 = BiCGSTAB(a1, b1); // решаем уравнение пуассона
     }
     Print_matrix(a1);
