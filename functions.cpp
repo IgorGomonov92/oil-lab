@@ -58,6 +58,7 @@ vector<double> BiCGSTAB(matrix<double> a, vector<double> b) {
 }
 
 double y=0.0;
+
 // вывод матрицы
 void Print_matrix(matrix<double> a)
 {
@@ -111,7 +112,7 @@ matrix<double> Construct_matrix_Laplace(int q)
 
 // создаем нагрузку
 
-vector<double> Construct_load(int q, double h, vector<double> bc)
+vector<double> Construct_load_Laplace(int q, double h, vector<double> bc)
 {
     unsigned long n=q*q*q;
     vector<double> b(n);
@@ -127,7 +128,7 @@ vector<double> Construct_load(int q, double h, vector<double> bc)
 
 // задаем граничный условия
 
-vector<double> Construct_BC(int q)
+vector<double> Construct_BC_Laplace(int q)
 {
     unsigned long n;
     n = q * q * q;
@@ -138,6 +139,22 @@ vector<double> Construct_BC(int q)
     }
 
     return bc;
+}
+
+
+// задаем граничный условия
+
+vector<double> Construct_BC_Poisson(int q)
+{
+    unsigned long n;
+    n = q * q * q;
+    vector<double> bc1(n);
+    for(unsigned long i=0; i<n; i++)
+    {
+        bc1(i) = .1;
+    }
+
+    return bc1;
 }
 
 // print unknowns
@@ -156,7 +173,48 @@ void Print_vectors(int q, vector<double> u)
     std::cout << std::endl;
 }
 
+matrix<double> Construct_matrix_Poisson(int q)
+{
+    unsigned long row=0;
+    unsigned long n;
+    n = q * q * q;
+    matrix<double> a(n, n);// матрица СЛАУ
+    a.clear();
+    for(unsigned long k=1; k<=q; k++)
+    {
+        for(unsigned long j=1; j<=q; j++)
+        {
+            for(unsigned long i=1; i<=q; i++)
+            {
+                if (k>1)        a(row,row-q*q) = 1;
+                if (j>1)        a(row,row-q)   = 1;
+                if (i>1)        a(row,row-1)   = 1;
+                a(row,row) = -6;
+                if (k<q)        a(row,row+q*q) = 1;
+                if (j<q)        a(row,row+q)   = 1;
+                if (i<q)        a(row,row+1)   = 1;
 
+                row++;
+            }
+        }
+
+    }
+    return a;
+}
+
+
+vector<double> Construct_load_Poisson(int q, double h, vector<double> bc, vector<double> f)
+{
+    unsigned long n=q*q*q;
+    vector<double> b(n);
+    for(unsigned long i=0 ; i<n; i++)
+    {
+        if (i < q)    b(i) = bc(i) + f(i)*2*h;
+
+    }
+
+    return b;
+}
 
 
 

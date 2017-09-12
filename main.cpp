@@ -11,22 +11,27 @@ int main(int argc, char **argv)
     unsigned long q; // величина дискретизации
 
     unsigned long n;
-    vector<double> u(n); //неизв вектор
+    vector<double> u(n), u1(n); //неизв вектора ур ий Лапласа и Пуассона
     double h=1.0; // шаг сетки
 
-    q = 6;
+    q = 3;
     n = q * q * q;
 
     omp_set_num_threads(8);  // кол во тредов
 
     matrix<double> a(n, n), a1(n, n); // матрицы для решения уравнений Лапласа и Пуассона соотв
-    vector<double> bc(n);
+    vector<double> bc(n), bc1(n); // граничные условия для задач Лапласа и Дирихле
     vector<double> b(n), b1(n); //вектора нагрузки для ур Лапласа и Пуассона соотв
+    vector<double> f(n, .0); // правая часть уравнения пуассона
 
-    bc = Construct_BC(q);
-    b = Construct_load(q, h, bc);
+
+
+    bc = Construct_BC_Laplace(q);
+    bc1 = Construct_BC_Poisson(q);
+    b = Construct_load_Laplace(q, h, bc);
     a = Construct_matrix_Laplace(q);
-
+    b1 = Construct_load_Poisson(q, h, bc1, f);
+    a1 = Construct_matrix_Poisson(q);
     // настраиваем вывод
     std::cout.precision(3);
 
@@ -34,10 +39,12 @@ int main(int argc, char **argv)
     #pragma omp parallel
     {
         u = BiCGSTAB(a, b); // решаем уравнение Лапласа
+        u1 = BiCGSTAB(a1, b1); // решаем уравнение Лапласа
     }
-    Print_matrix(a);
-    Print_vectors(q, u);
-    Print_vectors(q, b);
+    Print_matrix(a1);
+    Print_vectors(q,u1);
+    Print_vectors(q,b1);
+    std::cout << b1;
 
     return 0;
 }
