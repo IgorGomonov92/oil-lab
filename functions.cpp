@@ -3,11 +3,11 @@
 //
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
-#include <omp.h>
+
 
 using namespace boost::numeric::ublas;
 
-//Установить количество потоков
+
 
 // реализация метода BiCGSTAB
 
@@ -57,38 +57,38 @@ vector<double> BiCGSTAB(matrix<double> a, vector<double> b) {
     return u;
 }
 
-double y=0.0;
+
 
 // вывод матрицы
 void Print_matrix(matrix<double> a)
 {
     std::cout << std::endl;
-    for(unsigned long i=0; i<a.size1(); i++)
+    for(int i=0; i<a.size1(); i++)
     {
-        for(unsigned long j=0; j<a.size2(); j++)
+        for(int j=0; j<a.size2(); j++)
         {
 
             std::cout << a(i,j) << ' ';
-            y = a(i,j);
+
         }
         std::cout << std::endl;
     }
 
 }
 
-// собираем матрицу СЛАУ
+// собираем матрицу СЛАУ для ур ия лапласа
 matrix<double> Construct_matrix_Laplace(int q)
 {
-    unsigned long row=0;
-    unsigned long n;
+    int row=0;
+    int n;
     n = q * q * q;
     matrix<double> a(n, n);// матрица СЛАУ
     a.clear();
-    for(unsigned long k=1; k<=q; k++)
+    for(int k=1; k<=q; k++)
     {
-        for(unsigned long j=1; j<=q; j++)
+        for(int j=1; j<=q; j++)
         {
-            for(unsigned long i=1; i<=q; i++)
+            for(int i=1; i<=q; i++)
             {
                 if (k>1)        a(row,row-q*q) = 1;
                 if (j>1)        a(row,row-q)   = 1;
@@ -114,10 +114,10 @@ matrix<double> Construct_matrix_Laplace(int q)
 
 vector<double> Construct_load_Laplace(int q, double h, vector<double> bc)
 {
-    unsigned long n=q*q*q;
+    int n=q*q*q;
     vector<double> b(n);
-    unsigned long j=0;
-    for(unsigned long i=0 ; i<n; i++)
+    int j=0;
+    for(int i=0 ; i<n; i++)
     {
         if (i < q)    b(i) = 2*h*bc(j);
         j++;
@@ -130,10 +130,10 @@ vector<double> Construct_load_Laplace(int q, double h, vector<double> bc)
 
 vector<double> Construct_BC_Laplace(int q)
 {
-    unsigned long n;
+    int n;
     n = q * q * q;
     vector<double> bc(n);
-    for(unsigned long i=0; i<n; i++)
+    for(int i=0; i<n; i++)
     {
         bc(i) = .2;
     }
@@ -146,10 +146,10 @@ vector<double> Construct_BC_Laplace(int q)
 
 vector<double> Construct_BC_Poisson(int q)
 {
-    unsigned long n;
+    int n;
     n = q * q * q;
     vector<double> bc1(n);
-    for(unsigned long i=0; i<n; i++)
+    for(int i=0; i<n; i++)
     {
         bc1(i) = .1;
     }
@@ -160,9 +160,9 @@ vector<double> Construct_BC_Poisson(int q)
 // print unknowns
 void Print_vectors(int q, vector<double> u)
 {
-    unsigned long j=0, k=0;
+    int j=0, k=0;
     std::cout << std::endl;
-    for(unsigned long i=0; i<u.size(); i++)
+    for(int i=0; i<u.size(); i++)
     {
         std::cout << u[i]<< " ";
 
@@ -175,16 +175,16 @@ void Print_vectors(int q, vector<double> u)
 
 matrix<double> Construct_matrix_Poisson(int q)
 {
-    unsigned long row=0;
-    unsigned long n;
+    int row=0;
+    int n;
     n = q * q * q;
     matrix<double> a(n, n);// матрица СЛАУ
     a.clear();
-    for(unsigned long k=1; k<=q; k++)
+    for(int k=1; k<=q; k++)
     {
-        for(unsigned long j=1; j<=q; j++)
+        for(int j=1; j<=q; j++)
         {
-            for(unsigned long i=1; i<=q; i++)
+            for(int i=1; i<=q; i++)
             {
                 if (k>1)        a(row,row-q*q) = 1;
                 if (j>1)        a(row,row-q)   = 1;
@@ -205,9 +205,10 @@ matrix<double> Construct_matrix_Poisson(int q)
 
 vector<double> Construct_load_Poisson(int q, double h, vector<double> bc, vector<double> f)
 {
-    unsigned long n=q*q*q;
+    int n;
+    n = q * q * q;
     vector<double> b(n);
-    for(unsigned long i=0 ; i<n; i++)
+    for(int i=0 ; i<n; i++)
     {
         if (i < q)    b(i) = bc(i) + f(i)*2*h;
 

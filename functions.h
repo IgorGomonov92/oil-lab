@@ -7,6 +7,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 
+
 using namespace boost::numeric::ublas;
 
 vector<double> BiCGSTAB(matrix<double> a, vector<double> b);
