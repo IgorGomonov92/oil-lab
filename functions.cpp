@@ -82,7 +82,7 @@ matrix<double> Construct_matrix_Laplace(int q)
     int row=0;
     int n;
     n = q * q * q;
-    matrix<double> a(n, n);// матрица СЛАУ
+    matrix<double> a(n, n, .0);// матрица СЛАУ
     a.clear();
     for(int k=1; k<=q; k++)
     {
@@ -115,12 +115,10 @@ matrix<double> Construct_matrix_Laplace(int q)
 vector<double> Construct_load_Laplace(int q, double h, vector<double> bc)
 {
     int n=q*q*q;
-    vector<double> b(n);
-    int j=0;
+    vector<double> b(n, .0);
     for(int i=0 ; i<n; i++)
     {
-        if (i < q)    b(i) = 2*h*bc(j);
-        j++;
+        if (i < q*q)    b(i) = 2*h*bc(i);
     }
 
     return b;
@@ -132,7 +130,7 @@ vector<double> Construct_BC_Laplace(int q)
 {
     int n;
     n = q * q * q;
-    vector<double> bc(n);
+    vector<double> bc(n, .0);
     for(int i=0; i<n; i++)
     {
         bc(i) = .2;
@@ -142,13 +140,13 @@ vector<double> Construct_BC_Laplace(int q)
 }
 
 
-// задаем граничный условия
+// задаем граничные условия
 
 vector<double> Construct_BC_Poisson(int q)
 {
     int n;
     n = q * q * q;
-    vector<double> bc1(n);
+    vector<double> bc1(n, .0);
     for(int i=0; i<n; i++)
     {
         bc1(i) = .1;
@@ -178,7 +176,7 @@ matrix<double> Construct_matrix_Poisson(int q)
     int row=0;
     int n;
     n = q * q * q;
-    matrix<double> a(n, n);// матрица СЛАУ
+    matrix<double> a(n, n, .0);// матрица СЛАУ
     a.clear();
     for(int k=1; k<=q; k++)
     {
@@ -207,10 +205,10 @@ vector<double> Construct_load_Poisson(int q, double h, vector<double> bc, vector
 {
     int n;
     n = q * q * q;
-    vector<double> b(n);
-    for(int i=0 ; i<n; i++)
+    vector<double> b(n, .0);
+    for(unsigned long i=0 ; i<n; i++)
     {
-        if (i < q)    b(i) = bc(i) + f(i)*2*h;
+        if (i < q*q)    b(i) = bc(i) + f(i)*2.0*h;
 
     }
 

@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     matrix<double> a(n, n), a1(n, n); // матрицы для решения уравнений Лапласа и Пуассона соотв
     vector<double> bc(n), bc1(n); // граничные условия для задач Лапласа и Дирихле
     vector<double> b(n), b1(n); //вектора нагрузки для ур Лапласа и Пуассона соотв
-    vector<double> f(n, .0); // правая часть уравнения пуассона
+    vector<double> f(n, .5); // правая часть уравнения пуассона
 
 
     bc = Construct_BC_Laplace(q);
@@ -40,12 +40,14 @@ int main(int argc, char **argv)
     #pragma omp parallel
     {
         u = BiCGSTAB(a, b); // решаем уравнение Лапласа
-        u1 = BiCGSTAB(a1, b1); // решаем уравнение Лапласа
+        u1 = BiCGSTAB(a1, b1); // решаем уравнение пуассона
     }
-//    Print_matrix(a1);
-    //Print_vectors(q,u1);
-    //Print_vectors(q,b1);
-  //  std::cout << b1;
+    Print_matrix(a1);
+    Print_vectors(q,u1);
+    Print_vectors(q,b);
+    std::cout << bc1<<std::endl;
+    std::cout << b1<<std::endl;
+    std::cout << f<<std::endl;
 
     return 0;
 }
