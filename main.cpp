@@ -7,11 +7,13 @@ using namespace boost::numeric::ublas;
 
 int main(int argc, char **argv)
 {
-    int q; // величина дискретизации
+    int qx, qy, qz; // кол во узлов по x y z
     int n;
-    q = 5;
+    qx = 3;
+    qy = 4;
+    qz = 5;
 
-    n = q * q * q;
+    n = qx * qy * qz;
 
     vector<double> u(n), u1(n); //неизв вектора ур ий Лапласа и Пуассона
     double h=1.0; // шаг сетки
@@ -22,12 +24,12 @@ int main(int argc, char **argv)
     vector<double> f(n, .5); // правая часть уравнения пуассона
 
 
-    bc = Construct_BC_Laplace(q);
-    bc1 = Construct_BC_Poisson(q);
-    b = Construct_load_Laplace(q, h, bc);
-    a = Construct_matrix_Laplace(q);
+    bc = Construct_BC_Laplace(n);
+    bc1 = Construct_BC_Poisson(n);
+    b = Construct_load_Laplace(qx, qy, qz, h, bc);
+    a = Construct_matrix_Laplace(qx, qy, qz);
 
-    a1 = Construct_matrix_Poisson(q);
+    a1 = Construct_matrix_Poisson(qx, qy, qz);
 
     // настраиваем вывод
     std::cout.precision(3);
@@ -35,14 +37,14 @@ int main(int argc, char **argv)
     //реализация с BicGstab c OMP
 
             u = BiCGSTAB(a, b); // решаем уравнение Лапласа
-            b1 = Construct_load_Poisson(q, h, bc1, f);
+            b1 = Construct_load_Poisson(qx, qy, qx, h, bc1, f);
             u1 = BiCGSTAB(a1, b1); // решаем уравнение пуассона
 
 
 
     Print_matrix(a1);
-    Print_vectors(q,u1);
-    Print_vectors(q,b);
+    Print_vectors(qx, qy, qz, u1);
+    Print_vectors(qx, qy, qz, b);
     std::cout << bc1<<std::endl;
     std::cout << b1<<std::endl;
     std::cout << f<<std::endl;

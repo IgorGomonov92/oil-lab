@@ -12,12 +12,12 @@ using namespace boost::numeric::ublas;
 
 vector<double> BiCGSTAB(matrix<double> a, vector<double> b);
 void Print_matrix(matrix<double> a);
-matrix<double> Construct_matrix_Laplace(int q);
-matrix<double> Construct_matrix_Poisson(int q);
+matrix<double> Construct_matrix_Laplace(int q, int i, int i1);
+matrix<double> Construct_matrix_Poisson(int q, int i, int i1);
 vector<double> Construct_BC_Laplace(int q);
 vector<double> Construct_BC_Poisson(int q);
-vector<double> Construct_load_Laplace(int q, double h, vector<double> bc);
-vector<double> Construct_load_Poisson(int q, double h, vector<double> bc, vector<double> f);
-void Print_vectors(int q, vector<double> u);
+vector<double> Construct_load_Laplace(int q, int h, int bc, double d, vector<double> vector1);
+vector<double> Construct_load_Poisson(int q, int h, int bc, double f, vector<double> vector1, vector<double> vector2);
+void Print_vectors(int q, int u, int i, vector<double> vector1);
 
 #endif //FDM_FUNCTIONS_H
