@@ -12,49 +12,51 @@ using namespace boost::numeric::ublas;
 // реализация метода BiCGSTAB
 
 vector<double> BiCGSTAB(matrix<double> a, vector<double> b) {
-    vector<double> r, r0, u0, rt, p, p0, v, v0, prom1, prom2, s, t, u;
-    double alpha0 = 1, alpha, beta = 0, ro0 = 1, ro, w, w0 = 1;
+        vector<double> r, r0, u0, rt, p, p0, v, v0, prom1, prom2, s, t, u;
+        double alpha0 = 1, alpha, beta = 0, ro0 = 1, ro, w, w0 = 1;
 
-    u.clear();
-    u0.clear();
-    v0.clear();
-    p0.clear();
-    p.clear();
-    p.resize(b.size(), true);
-    u0.resize(b.size(), true);
-    v0.resize(b.size(), true);
-    p0.resize(b.size(), true);
-    u.resize(b.size(), true);
+        u.clear();
+        u0.clear();
+        v0.clear();
+        p0.clear();
+        p.clear();
+        p.resize(b.size(), true);
+        u0.resize(b.size(), true);
+        v0.resize(b.size(), true);
+        p0.resize(b.size(), true);
+        u.resize(b.size(), true);
 
-    r0 = b - prod(a, u);
-    rt = r0;
+        r0 = b - prod(a, u);
+        rt = r0;
+    int i=0;
+        do {
+            i++;
+                ro = inner_prod(rt, r0);
+                beta = ro / ro0 * alpha0 / w0;
+                prom1 = w0 * v0;
+                prom2 = p0 - prom1;
+                p = r0 + beta * prom2;
+                v = prod(a, p);
+                alpha = ro0 / inner_prod(rt, v);
+                s = r0 - alpha * v;
+                t = prod(a, s);
+                w = inner_prod(t, s) / inner_prod(t, t);
+                u = u0 + w * s + alpha * p;
+                r = s - w * t;
 
-    do {
-        ro = inner_prod(rt, r0);
-        beta = ro / ro0 * alpha0 / w0;
-        prom1 = w0 * v0;
-        prom2 = p0 - prom1;
-        p = r0 + beta * prom2;
-        v = prod(a, p);
-        alpha = ro0 / inner_prod(rt, v);
-        s = r0 - alpha * v;
-        t = prod(a, s);
-        w = inner_prod(t, s) / inner_prod(t, t);
-        u = u0 + w * s + alpha * p;
-        r = s - w * t;
 
+                ro0 = ro;
+                alpha0 = alpha;
+                w0 = w;
+                r0 = r;
+                p0 = p;
+                v0 = v;
+                u0 = u;
 
-        ro0 = ro;
-        alpha0 = alpha;
-        w0 = w;
-        r0 = r;
-        p0 = p;
-        v0 = v;
-        u0 = u;
+        } while (norm_2(r) / norm_2(b) > 1.0e-5);
+        std::cout <<std::endl << i << std::endl;
+        return u;
 
-    } while (norm_2(r) / norm_2(b) > 1.0e-5);
-
-    return u;
 }
 
 
