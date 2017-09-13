@@ -10,6 +10,7 @@ int main(int argc, char **argv)
     int q; // величина дискретизации
     int n;
     q = 5;
+
     n = q * q * q;
 
     vector<double> u(n), u1(n); //неизв вектора ур ий Лапласа и Пуассона
