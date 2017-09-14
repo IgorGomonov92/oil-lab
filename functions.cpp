@@ -19,12 +19,14 @@ vector<double> BiCGSTAB(matrix<double> a, vector<double> b) {
         u0.clear();
         v0.clear();
         p0.clear();
+        r0.clear();
         p.clear();
-        p.resize(b.size(), true);
-        u0.resize(b.size(), true);
-        v0.resize(b.size(), true);
-        p0.resize(b.size(), true);
-        u.resize(b.size(), true);
+        p.resize(a.size1(), true);
+        u0.resize(a.size1(), true);
+        v0.resize(a.size1(), true);
+        p0.resize(a.size1(), true);
+        r0.resize(a.size1(), true);
+        u.resize(a.size1(), true);
 
         r0 = b - prod(a, u);
         rt = r0;
@@ -91,18 +93,18 @@ matrix<double> Construct_matrix_Laplace(int qx, int qy, int qz)
         for(int j=1; j<=qy; j++)
         {
             for(int i=1; i<=qx; i++)
-            {row++;
+            {
                 if (k>1)        a(row,row-qx*qy) = 1;
-                if (j>1)        a(row,row-qy)   = 1;
+                if (j>1)        a(row,row-qx)   = 1;
                 if (i>1)        a(row,row-1)   = 1;
                 a(row,row) = -6;
                 if (k<qz)        a(row,row+qx*qy) = 1;
-                if (j<qy)        a(row,row+qy)   = 1;
+                if (j<qy)        a(row,row+qx)   = 1;
                 if (i<qx)        a(row,row+1)   = 1;
 
                 //implementing Neumann B.C.
                 if (k<qz && row<qx*qy)        a(row,row+qx*qy) = 2;
-
+                row++;
             }
         }
 
@@ -180,16 +182,15 @@ matrix<double> Construct_matrix_Poisson(int qx, int qy, int qz)
     {
         for(int j=1; j<=qy; j++)
         {
-            for(int i=1; i<=qx; i++)
-            {
-                if (k>1)        a(row,row-qx*qy) = 1;
-                if (j>1)        a(row,row-qy)   = 1;
-                if (i>1)        a(row,row-1)   = 1;
-                a(row,row) = -6;
-                if (k<qz)        a(row,row+qx*qy) = 1;
-                if (j<qy)        a(row,row+qy)   = 1;
-                if (i<qx)        a(row,row+1)   = 1;
+            for(int i=1; i<=qx; i++) {
 
+                if (k > 1) a(row, row - qx * qy) = 1;
+                if (j > 1) a(row, row - qx) = 1;
+                if (i > 1) a(row, row - 1) = 1;
+                a(row, row) = -6;
+                if (k < qz) a(row, row + qx * qy) = 1;
+                if (j < qy) a(row, row + qx) = 1;
+                if (i < qx) a(row, row + 1) = 1;
                 row++;
             }
         }

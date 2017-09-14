@@ -28,6 +28,7 @@ int main(int argc, char **argv)
     bc1 = Construct_BC_Poisson(n);
     b = Construct_load_Laplace(qx, qy, qz, h, bc);
     a = Construct_matrix_Laplace(qx, qy, qz);
+    Print_matrix(a);
 
     a1 = Construct_matrix_Poisson(qx, qy, qz);
 
@@ -37,7 +38,7 @@ int main(int argc, char **argv)
     //реализация с BicGstab c OMP
 
             u = BiCGSTAB(a, b); // решаем уравнение Лапласа
-            b1 = Construct_load_Poisson(qx, qy, qx, h, bc1, f);
+            b1 = Construct_load_Poisson(qx, qy, qz, h, bc1, f);
             u1 = BiCGSTAB(a1, b1); // решаем уравнение пуассона
 
 
