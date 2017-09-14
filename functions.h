@@ -8,16 +8,17 @@
 #include <boost/numeric/ublas/io.hpp>
 
 
+
 using namespace boost::numeric::ublas;
 
 vector<double> BiCGSTAB(matrix<double> a, vector<double> b);
 void Print_matrix(matrix<double> a);
-matrix<double> Construct_matrix_Laplace(int q, int i, int i1);
-matrix<double> Construct_matrix_Poisson(int q, int i, int i1);
-vector<double> Construct_BC_Laplace(int q);
-vector<double> Construct_BC_Poisson(int q);
-vector<double> Construct_load_Laplace(int q, int h, int bc, double d, vector<double> vector1);
-vector<double> Construct_load_Poisson(int q, int h, int bc, double f, vector<double> vector1, vector<double> vector2);
-void Print_vectors(int q, int u, int i, vector<double> vector1);
+matrix<double> Construct_matrix_Laplace();
+matrix<double> Construct_matrix_Poisson();
+vector<double> Construct_BC_Laplace();
+vector<double> Construct_BC_Poisson();
+vector<double> Construct_load_Laplace(double d, vector<double> vector1);
+vector<double> Construct_load_Poisson(double f, vector<double> vector1, vector<double> vector2);
+void Print_vectors(vector<double> vector1);
 
 #endif //FDM_FUNCTIONS_H

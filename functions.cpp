@@ -3,7 +3,10 @@
 //
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
+#include "functions.h"
 
+inline const int qx=3, qy=4, qz=5;
+inline  const int n = qx * qy * qz;
 
 using namespace boost::numeric::ublas;
 
@@ -14,7 +17,6 @@ using namespace boost::numeric::ublas;
 vector<double> BiCGSTAB(matrix<double> a, vector<double> b) {
         vector<double> r, r0, u0, rt, p, p0, v, v0, prom1, prom2, s, t, u;
         double alpha0 = 1, alpha, beta = 0, ro0 = 1, ro, w, w0 = 1;
-
         u.clear();
         u0.clear();
         v0.clear();
@@ -81,11 +83,9 @@ void Print_matrix(matrix<double> a)
 }
 
 // собираем матрицу СЛАУ для ур ия лапласа
-matrix<double> Construct_matrix_Laplace(int qx, int qy, int qz)
+matrix<double> Construct_matrix_Laplace()
 {
     int row=0;
-    int n;
-    n = qx * qy * qz;
     matrix<double> a(n, n, .0);// матрица СЛАУ
     a.clear();
     for(int k=1; k<=qz; k++)
@@ -116,9 +116,8 @@ matrix<double> Construct_matrix_Laplace(int qx, int qy, int qz)
 
 // создаем нагрузку
 
-vector<double> Construct_load_Laplace(int qx, int qy, int qz, double h, vector<double> bc)
+vector<double> Construct_load_Laplace(double h, vector<double> bc)
 {
-    int n=qx*qy*qz;
     vector<double> b(n, .0);
     for(int i=0 ; i<n; i++)
     {
@@ -130,7 +129,7 @@ vector<double> Construct_load_Laplace(int qx, int qy, int qz, double h, vector<d
 
 // задаем граничный условия
 
-vector<double> Construct_BC_Laplace(int n)
+vector<double> Construct_BC_Laplace()
 {
     vector<double> bc(n, .0);
     for(int i=0; i<n; i++)
@@ -144,7 +143,7 @@ vector<double> Construct_BC_Laplace(int n)
 
 // задаем граничные условия
 
-vector<double> Construct_BC_Poisson(int n)
+vector<double> Construct_BC_Poisson()
 {
     vector<double> bc1(n, .0);
     for(int i=0; i<n; i++)
@@ -156,7 +155,7 @@ vector<double> Construct_BC_Poisson(int n)
 }
 
 // print unknowns
-void Print_vectors(int qx, int qy, int qz, vector<double> u)
+void Print_vectors(vector<double> u)
 {
     int j=0, k=0;
     std::cout << std::endl;
@@ -171,11 +170,9 @@ void Print_vectors(int qx, int qy, int qz, vector<double> u)
     std::cout << std::endl;
 }
 
-matrix<double> Construct_matrix_Poisson(int qx, int qy, int qz)
+matrix<double> Construct_matrix_Poisson()
 {
     int row=0;
-    int n;
-    n = qx * qy * qz;
     matrix<double> a(n, n, .0);// матрица СЛАУ
     a.clear();
     for(int k=1; k<=qz; k++)
@@ -200,10 +197,8 @@ matrix<double> Construct_matrix_Poisson(int qx, int qy, int qz)
 }
 
 
-vector<double> Construct_load_Poisson(int qx, int qy, int qz, double h, vector<double> bc, vector<double> f)
+vector<double> Construct_load_Poisson(double h, vector<double> bc, vector<double> f)
 {
-    int n;
-    n = qx * qy * qz;
     vector<double> b(n, .0);
     for(unsigned long i=0 ; i<n; i++)
     {
