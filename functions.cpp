@@ -155,14 +155,13 @@ vector<double> Construct_BC_Poisson()
 // print unknowns
 void Print_vectors(vector<double> u)
 {
-    int j=0, k=0;
     std::cout << std::endl;
     for(int i=0; i<u.size(); i++)
     {
         std::cout << u[i]<< " ";
 
-        if((i + 1) % (u.size() / qx / qy) == 0) std::cout << std::endl;
-        if((i + 1) % (u.size() / qz ) == 0) std::cout << std::endl;
+        if((i + 1) % (qx) == 0)  std::cout << std::endl;
+        if((i + 1) % (qx*qy) == 0) std::cout << std::endl;
 
     }
     std::cout << std::endl;
