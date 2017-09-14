@@ -4,5 +4,5 @@
 
 //размеры сетки - глоб константы
 
-const int qx=3, qy=4, qz=5;
-const int n = qx * qy * qz;
+const long qx=3, qy=4, qz=5;
+const long n = qx * qy * qz;

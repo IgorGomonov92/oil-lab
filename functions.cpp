@@ -5,22 +5,19 @@
 #include <boost/numeric/ublas/io.hpp>
 #include "functions.h"
 #include "global.cpp"
+#include "/home/igor/Eigen/Eigen/SparseCore"
 
-using namespace boost::numeric::ublas;
+
+using namespace Eigen;
 
 
 
 // реализация метода BiCGSTAB
 
-vector<double> BiCGSTAB(matrix<double> a, vector<double> b) {
-        vector<double> r, r0, u0, rt, p, p0, v, v0, prom1, prom2, s, t, u;
+VectorXd BiCGSTAB(SparseMatrix<double> a, VectorXd b) {
+        VectorXd r, r0, u0, rt, p, p0, v, v0, prom1, prom2, s, t, u;
         double alpha0 = 1, alpha, beta = 0, ro0 = 1, ro, w, w0 = 1;
-        u.clear();
-        u0.clear();
-        v0.clear();
-        p0.clear();
-        r0.clear();
-        p.clear();
+/*
         p.resize(a.size1(), true);
         u0.resize(a.size1(), true);
         v0.resize(a.size1(), true);
@@ -58,18 +55,18 @@ vector<double> BiCGSTAB(matrix<double> a, vector<double> b) {
         } while (norm_2(r) / norm_2(b) > 1.0e-5);
         std::cout <<std::endl << i << std::endl;
         return u;
-
+*/
 }
 
 
 
 // вывод матрицы
-void Print_matrix(matrix<double> a)
+void Print_matrix(SparseMatrix<double> a)
 {
     std::cout << std::endl;
-    for(int i=0; i<a.size1(); i++)
+    for(int i=0; i<a.size(); i++)
     {
-        for(int j=0; j<a.size2(); j++)
+        for(int j=0; j<a.size(); j++)
         {
 
             std::cout << a(i,j) << ' ';
@@ -81,11 +78,11 @@ void Print_matrix(matrix<double> a)
 }
 
 // собираем матрицу СЛАУ для ур ия лапласа
-matrix<double> Construct_matrix_Laplace()
+SparseMatrix<double> Construct_matrix_Laplace()
 {
     int row=0;
-    matrix<double> a(n, n, .0);// матрица СЛАУ
-    a.clear();
+    SparseMatrix<double> a(n, n, .0);// матрица СЛАУ
+
     for(int k=1; k<=qz; k++)
     {
         for(int j=1; j<=qy; j++)
@@ -114,9 +111,9 @@ matrix<double> Construct_matrix_Laplace()
 
 // создаем нагрузку
 
-vector<double> Construct_load_Laplace(double h, vector<double> bc)
+VectorXd Construct_load_Laplace(double h, VectorXd bc)
 {
-    vector<double> b(n, .0);
+    VectorXd b(n, .0);
     for(int i=0 ; i<n; i++)
     {
         if (i < qx*qy)    b(i) = 2*h*bc(i);
@@ -127,9 +124,9 @@ vector<double> Construct_load_Laplace(double h, vector<double> bc)
 
 // задаем граничный условия
 
-vector<double> Construct_BC_Laplace()
+VectorXd Construct_BC_Laplace()
 {
-    vector<double> bc(n, .0);
+    VectorXd bc(n, .0);
     for(int i=0; i<n; i++)
     {
         bc(i) = .2;
@@ -141,9 +138,9 @@ vector<double> Construct_BC_Laplace()
 
 // задаем граничные условия
 
-vector<double> Construct_BC_Poisson()
+VectorXd Construct_BC_Poisson()
 {
-    vector<double> bc1(n, .0);
+    VectorXd bc1(n, .0);
     for(int i=0; i<n; i++)
     {
         bc1(i) = .1;
@@ -153,7 +150,7 @@ vector<double> Construct_BC_Poisson()
 }
 
 // print unknowns
-void Print_vectors(vector<double> u)
+void Print_vectors(VectorXd u)
 {
     std::cout << std::endl;
     for(int i=0; i<u.size(); i++)
@@ -167,11 +164,11 @@ void Print_vectors(vector<double> u)
     std::cout << std::endl;
 }
 
-matrix<double> Construct_matrix_Poisson()
+SparseMatrix<double> Construct_matrix_Poisson()
 {
     int row=0;
-    matrix<double> a(n, n, .0);// матрица СЛАУ
-    a.clear();
+    SparseMatrix<double> a(n, n, .0);// матрица СЛАУ
+
     for(int k=1; k<=qz; k++)
     {
         for(int j=1; j<=qy; j++)
@@ -194,9 +191,9 @@ matrix<double> Construct_matrix_Poisson()
 }
 
 
-vector<double> Construct_load_Poisson(double h, vector<double> bc, vector<double> f)
+VectorXd Construct_load_Poisson(double h, VectorXd bc, VectorXd f)
 {
-    vector<double> b(n, .0);
+    VectorXd b(n, .0);
     for(unsigned long i=0 ; i<n; i++)
     {
         if (i < qx*qy)    b(i) = bc(i) + f(i)*2.0*h;
