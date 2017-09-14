@@ -2,17 +2,13 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include "functions.h"
-
-//размеры сетки - глоб константы
+#include "global.cpp"
 
 
 using namespace boost::numeric::ublas;
 
 int main(int argc, char **argv)
 {
-    extern int n;
-
-
     vector<double> u(n), u1(n); //неизв векторы ур ий Лапласа и Пуассона
     double h=1.0; // шаг сетки
 

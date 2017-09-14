@@ -4,9 +4,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include "functions.h"
-
-inline const int qx=3, qy=4, qz=5;
-inline  const int n = qx * qy * qz;
+#include "global.cpp"
 
 using namespace boost::numeric::ublas;
 
