@@ -60,28 +60,12 @@ SpMat BiCGSTAB(SpMat a, SpMat b) {
 
 
 
-// вывод матрицы
-void Print_matrix(SpMat a)
-{
-    std::cout << std::endl;
-    for(int i=0; i<a.size(); i++)
-    {
-        for(int j=0; j<a.size(); j++)
-        {
-
-            std::cout << a(i,j) << ' ';
-
-        }
-        std::cout << std::endl;
-    }
-
-}
-
 // собираем матрицу СЛАУ для ур ия лапласа
 SpMat Construct_matrix_Laplace()
 {
+    std::vector<T> tripletList;
     int row=0;
-    SpMat a(n, n, .0);// матрица СЛАУ
+    SpMat a(n, n);// матрица СЛАУ
 
     for(int k=1; k<=qz; k++)
     {
@@ -89,30 +73,80 @@ SpMat Construct_matrix_Laplace()
         {
             for(int i=1; i<=qx; i++)
             {
-                if (k>1)        a(row,row-qx*qy) = 1;
-                if (j>1)        a(row,row-qx)   = 1;
-                if (i>1)        a(row,row-1)   = 1;
-                a(row,row) = -6;
-                if (k<qz)        a(row,row+qx*qy) = 1;
-                if (j<qy)        a(row,row+qx)   = 1;
-                if (i<qx)        a(row,row+1)   = 1;
-
+                if (k>1)        tripletList.push_back(T(row,row-qx*qy, 1));
+                if (j>1)        tripletList.push_back(T(row,row-qx, 1));
+                if (i>1)        tripletList.push_back(T(row,row-1, 1));
+                tripletList.push_back(T(row,row, -6));
+                if (k<qz)       tripletList.push_back(T(row,row+qx*qy, 1));
+                if (j<qy)       tripletList.push_back(T(row,row+qx, 1));
+                if (i<qx)       tripletList.push_back(T(row,row+1, 1));
                 //implementing Neumann B.C.
-                if (k<qz && row<qx*qy)        a(row,row+qx*qy) = 2;
+                if (k<qz && row<qx*qy)        tripletList.push_back(T(row,row+qx*qy, 1));
                 row++;
             }
         }
 
     }
+    a.setFromTriplets(tripletList.begin(), tripletList.end());
+    a.makeCompressed();
     return a;
 }
 
+SpMat Construct_matrix_Poisson()
+{
+    std::vector<T> tripletList;
+    int row=0;
+    SpMat a(n, n);// матрица СЛАУ
+
+    for(int k=1; k<=qz; k++)
+    {
+        for(int j=1; j<=qy; j++)
+        {
+            for(int i=1; i<=qx; i++)
+            {
+                if (k>1)        tripletList.push_back(T(row,row-qx*qy, 1));
+                if (j>1)        tripletList.push_back(T(row,row-qx, 1));
+                if (i>1)        tripletList.push_back(T(row,row-1, 1));
+                tripletList.push_back(T(row,row, -6));
+                if (k<qz)       tripletList.push_back(T(row,row+qx*qy, 1));
+                if (j<qy)       tripletList.push_back(T(row,row+qx, 1));
+                if (i<qx)       tripletList.push_back(T(row,row+1, 1));
+                row++;
+            }
+        }
+
+    }
+
+    a.setFromTriplets(tripletList.begin(), tripletList.end());
+    a.makeCompressed();
+    return a;
+}
+
+/*
+// вывод матрицы
+void Print_matrix(SpMat a)
+{
+    std::vector<T> tripletList;
+    std::cout << std::endl;
+    for(int i=0; i<a.size(); i++)
+    {
+        for(int j=0; j<a.size(); j++)
+        {
+
+            //  std::cout << tripletList.at(i,j) << ' ';
+
+        }
+        std::cout << std::endl;
+    }
+
+}
 
 
 // создаем нагрузку
 
 SpMat Construct_load_Laplace(double h, SpMat bc)
 {
+    std::vector<T> tripletList;
     SpMat b(n, .0);
     for(int i=0 ; i<n; i++)
     {
@@ -164,31 +198,6 @@ void Print_vectors(SpMat u)
     std::cout << std::endl;
 }
 
-SpMat Construct_matrix_Poisson()
-{
-    int row=0;
-    SpMat a(n, n);// матрица СЛАУ
-
-    for(int k=1; k<=qz; k++)
-    {
-        for(int j=1; j<=qy; j++)
-        {
-            for(int i=1; i<=qx; i++) {
-
-                if (k > 1) a(row, row - qx * qy) = 1;
-                if (j > 1) a(row, row - qx) = 1;
-                if (i > 1) a(row, row - 1) = 1;
-                a(row, row) = -6;
-                if (k < qz) a(row, row + qx * qy) = 1;
-                if (j < qy) a(row, row + qx) = 1;
-                if (i < qx) a(row, row + 1) = 1;
-                row++;
-            }
-        }
-
-    }
-    return a;
-}
 
 
 SpMat Construct_load_Poisson(double h, SpMat bc, SpMat f)
@@ -203,5 +212,5 @@ SpMat Construct_load_Poisson(double h, SpMat bc, SpMat f)
     return b;
 }
 
-
+*/
 

@@ -1,29 +1,29 @@
+
 #include <iostream>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include "functions.h"
-#include "global.cpp"
+
 #include "/home/igor/Eigen/Eigen/SparseCore"
 
 using namespace Eigen;
 
 int main(int argc, char **argv)
 {
-    SpMat u(n), u1(n); //неизв векторы ур ий Лапласа и Пуассона
+    SpMat u, u1; //неизв векторы ур ий Лапласа и Пуассона
     double h=1.0; // шаг сетки
-    SparseMatrix<double> A , A1(n,n); // матрицы для решения уравнений Лапласа и Пуассона соотв
-    SpMat bc(n), bc1(n); // граничные условия для задач Лапласа и Дирихле
-    SpMat b(n), b1(n); //векторы нагрузки для ур Лапласа и Пуассона соотв
-    SpMat f(n); // правая часть уравнения пуассона
+    SpMat A(n,n) , A1(n,n); // матрицы для решения уравнений Лапласа и Пуассона соотв
+    SpMat bc , bc1; // граничные условия для задач Лапласа и Дирихле
+    SpMat b, b1; //векторы нагрузки для ур Лапласа и Пуассона соотв
+    SpMat f; // правая часть уравнения пуассона
 
+    A = Construct_matrix_Laplace();
+    A1 = Construct_matrix_Poisson();
 
+/*
     bc = Construct_BC_Laplace();
     bc1 = Construct_BC_Poisson();
     b = Construct_load_Laplace(h, bc);
-    A = Construct_matrix_Laplace();
-    Print_matrix(A);
-
-    A1 = Construct_matrix_Poisson();
 
     // настраиваем вывод
     std::cout.precision(3);
@@ -39,6 +39,6 @@ int main(int argc, char **argv)
     Print_matrix(A1);
     Print_vectors(u1);
     Print_vectors(b);
-
+*/
     return 0;
 }

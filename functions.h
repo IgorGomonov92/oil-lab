@@ -12,13 +12,14 @@
 using namespace Eigen;
 
 SpMat BiCGSTAB(SparseMatrix<double> a, SpMat b);
-void Print_matrix(SparseMatrix<double> a);
-SparseMatrix<double> Construct_matrix_Laplace();
-SparseMatrix<double> Construct_matrix_Poisson();
-SpMat Construct_BC_Laplace();
+//void Print_matrix(SparseMatrix<double> a);
+SparseMatrix<double>   Construct_matrix_Laplace();
+SparseMatrix<double>   Construct_matrix_Poisson();
+
+/*SpMat Construct_BC_Laplace();
 SpMat Construct_BC_Poisson();
 SpMat Construct_load_Laplace(double d, SpMat vector1);
 SpMat Construct_load_Poisson(double f, SpMat vector1, SpMat vector2);
 void Print_vectors(SpMat vector1);
-
+*/
 #endif //FDM_FUNCTIONS_H
