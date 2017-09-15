@@ -4,7 +4,7 @@
 #include "/home/igor/Eigen/Eigen/SparseCore"
 //размеры сетки - глоб константы
 
-const long qx=3, qy=4, qz=5;
+const long qx=300, qy=400, qz=500;
 const long n = qx * qy * qz;
 
 typedef Eigen::SparseMatrix<double> SpMat;

@@ -4,7 +4,9 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include "functions.h"
+#include <omp.h>
 
+#include "/home/igor/My_linalg/my_linalg.cpp"
 #include "/home/igor/Eigen/Eigen/SparseCore"
 
 
@@ -63,9 +65,11 @@ SpMat BiCGSTAB(SpMat a, SpMat b) {
 // собираем матрицу СЛАУ для ур ия лапласа
 SpMat Construct_matrix_Laplace()
 {
-    std::vector<T> tripletList;
+    omp_set_num_threads(8);
     int row=0;
-    SpMat a(n, n);// матрица СЛАУ
+    SpMat a(n,n);// матрица СЛАУ
+    a.reserve(VectorXi::Constant(n,7));
+
 
     for(int k=1; k<=qz; k++)
     {
@@ -73,21 +77,23 @@ SpMat Construct_matrix_Laplace()
         {
             for(int i=1; i<=qx; i++)
             {
-                if (k>1)        tripletList.push_back(T(row,row-qx*qy, 1));
-                if (j>1)        tripletList.push_back(T(row,row-qx, 1));
-                if (i>1)        tripletList.push_back(T(row,row-1, 1));
-                tripletList.push_back(T(row,row, -6));
-                if (k<qz)       tripletList.push_back(T(row,row+qx*qy, 1));
-                if (j<qy)       tripletList.push_back(T(row,row+qx, 1));
-                if (i<qx)       tripletList.push_back(T(row,row+1, 1));
+                if (k>1)        a.insert(row,row-qx*qy) = 1;
+                if (j>1)        a.insert(row,row-qx) = 1;
+                if (i>1)        a.insert(row,row-1) = 1;
+                a.insert(row,row) = -6;
+                if (k<qz && row>=qx*qy)       a.insert(row,row+qx*qy) = 1;
+                if (j<qy)       a.insert(row,row+qx) = 1;
+                if (i<qx)       a.insert(row,row+1) = 1;
                 //implementing Neumann B.C.
-                if (k<qz && row<qx*qy)        tripletList.push_back(T(row,row+qx*qy, 1));
+                if (k<qz && row<qx*qy)    a.insert(row,row+qx*qy) = 1;
                 row++;
+
             }
         }
 
     }
-    a.setFromTriplets(tripletList.begin(), tripletList.end());
+
+
     a.makeCompressed();
     return a;
 }
@@ -114,6 +120,7 @@ SpMat Construct_matrix_Poisson()
                 row++;
             }
         }
+        std::cout<<k;
 
     }
 

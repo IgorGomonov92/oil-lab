@@ -3,13 +3,17 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include "functions.h"
+#include <omp.h>
 
 #include "/home/igor/Eigen/Eigen/SparseCore"
+#include "../../My_linalg/my_linalg.h"
 
 using namespace Eigen;
 
 int main(int argc, char **argv)
 {
+
+
     SpMat u, u1; //неизв векторы ур ий Лапласа и Пуассона
     double h=1.0; // шаг сетки
     SpMat A(n,n) , A1(n,n); // матрицы для решения уравнений Лапласа и Пуассона соотв
@@ -17,8 +21,10 @@ int main(int argc, char **argv)
     SpMat b, b1; //векторы нагрузки для ур Лапласа и Пуассона соотв
     SpMat f; // правая часть уравнения пуассона
 
-    A = Construct_matrix_Laplace();
-    A1 = Construct_matrix_Poisson();
+
+
+      A = Construct_matrix_Laplace();
+//    A1 = Construct_matrix_Poisson();
 
 /*
     bc = Construct_BC_Laplace();
