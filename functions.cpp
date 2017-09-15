@@ -4,7 +4,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include "functions.h"
-#include "global.cpp"
+
 #include "/home/igor/Eigen/Eigen/SparseCore"
 
 
@@ -14,8 +14,8 @@ using namespace Eigen;
 
 // реализация метода BiCGSTAB
 
-VectorXd BiCGSTAB(SparseMatrix<double> a, VectorXd b) {
-        VectorXd r, r0, u0, rt, p, p0, v, v0, prom1, prom2, s, t, u;
+SpMat BiCGSTAB(SpMat a, SpMat b) {
+        SpMat r, r0, u0, rt, p, p0, v, v0, prom1, prom2, s, t, u;
         double alpha0 = 1, alpha, beta = 0, ro0 = 1, ro, w, w0 = 1;
 /*
         p.resize(a.size1(), true);
@@ -61,7 +61,7 @@ VectorXd BiCGSTAB(SparseMatrix<double> a, VectorXd b) {
 
 
 // вывод матрицы
-void Print_matrix(SparseMatrix<double> a)
+void Print_matrix(SpMat a)
 {
     std::cout << std::endl;
     for(int i=0; i<a.size(); i++)
@@ -78,10 +78,10 @@ void Print_matrix(SparseMatrix<double> a)
 }
 
 // собираем матрицу СЛАУ для ур ия лапласа
-SparseMatrix<double> Construct_matrix_Laplace()
+SpMat Construct_matrix_Laplace()
 {
     int row=0;
-    SparseMatrix<double> a(n, n, .0);// матрица СЛАУ
+    SpMat a(n, n, .0);// матрица СЛАУ
 
     for(int k=1; k<=qz; k++)
     {
@@ -111,9 +111,9 @@ SparseMatrix<double> Construct_matrix_Laplace()
 
 // создаем нагрузку
 
-VectorXd Construct_load_Laplace(double h, VectorXd bc)
+SpMat Construct_load_Laplace(double h, SpMat bc)
 {
-    VectorXd b(n, .0);
+    SpMat b(n, .0);
     for(int i=0 ; i<n; i++)
     {
         if (i < qx*qy)    b(i) = 2*h*bc(i);
@@ -124,9 +124,9 @@ VectorXd Construct_load_Laplace(double h, VectorXd bc)
 
 // задаем граничный условия
 
-VectorXd Construct_BC_Laplace()
+SpMat Construct_BC_Laplace()
 {
-    VectorXd bc(n, .0);
+    SpMat bc(n, .0);
     for(int i=0; i<n; i++)
     {
         bc(i) = .2;
@@ -138,9 +138,9 @@ VectorXd Construct_BC_Laplace()
 
 // задаем граничные условия
 
-VectorXd Construct_BC_Poisson()
+SpMat Construct_BC_Poisson()
 {
-    VectorXd bc1(n, .0);
+    SpMat bc1(n, .0);
     for(int i=0; i<n; i++)
     {
         bc1(i) = .1;
@@ -150,7 +150,7 @@ VectorXd Construct_BC_Poisson()
 }
 
 // print unknowns
-void Print_vectors(VectorXd u)
+void Print_vectors(SpMat u)
 {
     std::cout << std::endl;
     for(int i=0; i<u.size(); i++)
@@ -164,10 +164,10 @@ void Print_vectors(VectorXd u)
     std::cout << std::endl;
 }
 
-SparseMatrix<double> Construct_matrix_Poisson()
+SpMat Construct_matrix_Poisson()
 {
     int row=0;
-    SparseMatrix<double> a(n, n, .0);// матрица СЛАУ
+    SpMat a(n, n);// матрица СЛАУ
 
     for(int k=1; k<=qz; k++)
     {
@@ -191,9 +191,9 @@ SparseMatrix<double> Construct_matrix_Poisson()
 }
 
 
-VectorXd Construct_load_Poisson(double h, VectorXd bc, VectorXd f)
+SpMat Construct_load_Poisson(double h, SpMat bc, SpMat f)
 {
-    VectorXd b(n, .0);
+    SpMat b(n, .0);
     for(unsigned long i=0 ; i<n; i++)
     {
         if (i < qx*qy)    b(i) = bc(i) + f(i)*2.0*h;

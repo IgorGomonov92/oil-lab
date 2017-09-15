@@ -7,18 +7,18 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include "/home/igor/Eigen/Eigen/SparseCore"
-
+#include "global.cpp"
 
 using namespace Eigen;
 
-VectorXd BiCGSTAB(SparseMatrix<double> a, VectorXd b);
+SpMat BiCGSTAB(SparseMatrix<double> a, SpMat b);
 void Print_matrix(SparseMatrix<double> a);
 SparseMatrix<double> Construct_matrix_Laplace();
 SparseMatrix<double> Construct_matrix_Poisson();
-VectorXd Construct_BC_Laplace();
-VectorXd Construct_BC_Poisson();
-VectorXd Construct_load_Laplace(double d, VectorXd vector1);
-VectorXd Construct_load_Poisson(double f, VectorXd vector1, VectorXd vector2);
-void Print_vectors(VectorXd vector1);
+SpMat Construct_BC_Laplace();
+SpMat Construct_BC_Poisson();
+SpMat Construct_load_Laplace(double d, SpMat vector1);
+SpMat Construct_load_Poisson(double f, SpMat vector1, SpMat vector2);
+void Print_vectors(SpMat vector1);
 
 #endif //FDM_FUNCTIONS_H
