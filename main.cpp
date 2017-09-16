@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     ILUMAT.setFillfactor(7);
     ILUMAT.compute(AL);
 
-    BiCGSTAB< SparseMatrix<double>, Eigen::IncompleteLUT< double > > solver;
+    BiCGSTAB< SparseMatrix<double,RowMajor>, Eigen::IncompleteLUT< double > > solver;
 
     solver.preconditioner();
 
