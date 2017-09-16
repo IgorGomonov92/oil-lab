@@ -14,16 +14,18 @@ int main(int argc, char **argv)
 {
 
 
-    SpMat u, u1; //неизв векторы ур ий Лапласа и Пуассона
+    RowVectorXd u, u1; //неизв векторы ур ий Лапласа и Пуассона
     double h=1.0; // шаг сетки
-    SpMat A(n,n) , A1(n,n); // матрицы для решения уравнений Лапласа и Пуассона соотв
-    SpMat bc , bc1; // граничные условия для задач Лапласа и Дирихле
-    SpMat b, b1; //векторы нагрузки для ур Лапласа и Пуассона соотв
-    SpMat f; // правая часть уравнения пуассона
+    SpMat A1(n, n);
+    SpMat  A(n, n); // матрицы для решения уравнений Лапласа и Пуассона соотв
+    SparseVector<double>  bc(n) , bc1(n); // граничные условия для задач Лапласа и Дирихле
+    SparseVector<double> b(n), b1(n); //векторы нагрузки для ур Лапласа и Пуассона соотв
+    SparseVector<double> f(n); // правая часть уравнения пуассона
 
 
 
-      A = Construct_matrix_Laplace();
+      Construct_matrix_Laplace(&A);
+    std::cout<< A;
 //    A1 = Construct_matrix_Poisson();
 
 /*
@@ -46,5 +48,5 @@ int main(int argc, char **argv)
     Print_vectors(u1);
     Print_vectors(b);
 */
-    return 0;
+        return 0;
 }

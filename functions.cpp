@@ -63,12 +63,12 @@ SpMat BiCGSTAB(SpMat a, SpMat b) {
 
 
 // собираем матрицу СЛАУ для ур ия лапласа
-SpMat Construct_matrix_Laplace()
+void Construct_matrix_Laplace(SparseMatrix<double> * a )
 {
-    omp_set_num_threads(8);
+
     int row=0;
-    SpMat a(n,n);// матрица СЛАУ
-    a.reserve(VectorXi::Constant(n,7));
+   // SpMat a(n,n);// матрица СЛАУ
+    a->reserve(VectorXi::Constant(n,7));
 
 
     for(int k=1; k<=qz; k++)
@@ -77,15 +77,15 @@ SpMat Construct_matrix_Laplace()
         {
             for(int i=1; i<=qx; i++)
             {
-                if (k>1)        a.insert(row,row-qx*qy) = 1;
-                if (j>1)        a.insert(row,row-qx) = 1;
-                if (i>1)        a.insert(row,row-1) = 1;
-                a.insert(row,row) = -6;
-                if (k<qz && row>=qx*qy)       a.insert(row,row+qx*qy) = 1;
-                if (j<qy)       a.insert(row,row+qx) = 1;
-                if (i<qx)       a.insert(row,row+1) = 1;
+                if (k>1)        a->insert(row,row-qx*qy) = 1;
+                if (j>1)        a->insert(row,row-qx) = 1;
+                if (i>1)        a->insert(row,row-1) = 1;
+                a->insert(row,row) = -6;
+                if (k<qz && row>=qx*qy)       a->insert(row,row+qx*qy) = 1;
+                if (j<qy)       a->insert(row,row+qx) = 1;
+                if (i<qx)       a->insert(row,row+1) = 1;
                 //implementing Neumann B.C.
-                if (k<qz && row<qx*qy)    a.insert(row,row+qx*qy) = 1;
+                if (k<qz && row<qx*qy)    a->insert(row,row+qx*qy) = 1;
                 row++;
 
             }
@@ -94,15 +94,17 @@ SpMat Construct_matrix_Laplace()
     }
 
 
-    a.makeCompressed();
-    return a;
+    a->makeCompressed();
+    //return a;
 }
 
-SpMat Construct_matrix_Poisson()
+void Construct_matrix_Poisson(SparseMatrix<double> * a )
 {
-    std::vector<T> tripletList;
+
     int row=0;
-    SpMat a(n, n);// матрица СЛАУ
+    // SpMat a(n,n);// матрица СЛАУ
+    a->reserve(VectorXi::Constant(n,7));
+
 
     for(int k=1; k<=qz; k++)
     {
@@ -110,23 +112,23 @@ SpMat Construct_matrix_Poisson()
         {
             for(int i=1; i<=qx; i++)
             {
-                if (k>1)        tripletList.push_back(T(row,row-qx*qy, 1));
-                if (j>1)        tripletList.push_back(T(row,row-qx, 1));
-                if (i>1)        tripletList.push_back(T(row,row-1, 1));
-                tripletList.push_back(T(row,row, -6));
-                if (k<qz)       tripletList.push_back(T(row,row+qx*qy, 1));
-                if (j<qy)       tripletList.push_back(T(row,row+qx, 1));
-                if (i<qx)       tripletList.push_back(T(row,row+1, 1));
+                if (k>1)        a->insert(row,row-qx*qy) = 1;
+                if (j>1)        a->insert(row,row-qx) = 1;
+                if (i>1)        a->insert(row,row-1) = 1;
+                a->insert(row,row) = -6;
+                if (k<qz && row>=qx*qy)       a->insert(row,row+qx*qy) = 1;
+                if (j<qy)       a->insert(row,row+qx) = 1;
+                if (i<qx)       a->insert(row,row+1) = 1;
                 row++;
+
             }
         }
-        std::cout<<k;
 
     }
 
-    a.setFromTriplets(tripletList.begin(), tripletList.end());
-    a.makeCompressed();
-    return a;
+
+    a->makeCompressed();
+    //return a;
 }
 
 /*
@@ -150,46 +152,42 @@ void Print_matrix(SpMat a)
 
 
 // создаем нагрузку
-
-SpMat Construct_load_Laplace(double h, SpMat bc)
+*/
+void Construct_load_Laplace(double h, SparseVector<double> * b, SparseVector<double> * bc)
 {
-    std::vector<T> tripletList;
-    SpMat b(n, .0);
-    for(int i=0 ; i<n; i++)
+
+    for(int i=0 ; i<qx*qy; i++)
     {
-        if (i < qx*qy)    b(i) = 2*h*bc(i);
+        b->insert(i) = 2*h*b->coeff(i);
     }
 
-    return b;
+
 }
-
+/*
 // задаем граничный условия
-
-SpMat Construct_BC_Laplace()
+*/
+void Construct_BC_Laplace(SparseVector<double> * bc)
 {
-    SpMat bc(n, .0);
-    for(int i=0; i<n; i++)
+
+    for(int i=0; i<qx*qy; i++)
     {
-        bc(i) = .2;
+        bc->insert(i) = .2;
     }
 
-    return bc;
 }
 
 
 // задаем граничные условия
 
-SpMat Construct_BC_Poisson()
+void Construct_BC_Poisson(SparseVector<double> * bc)
 {
-    SpMat bc1(n, .0);
-    for(int i=0; i<n; i++)
+    for(int i=0; i<qz; i++)
     {
-        bc1(i) = .1;
+        bc->insert(i,0) = .1;
     }
 
-    return bc1;
 }
-
+/*
 // print unknowns
 void Print_vectors(SpMat u)
 {
@@ -205,19 +203,18 @@ void Print_vectors(SpMat u)
     std::cout << std::endl;
 }
 
+*/
 
-
-SpMat Construct_load_Poisson(double h, SpMat bc, SpMat f)
+void Construct_load_Poisson(double h, SparseVector<double> * b, SparseVector<double> * bc, SparseVector<double> * f)
 {
-    SpMat b(n, .0);
-    for(unsigned long i=0 ; i<n; i++)
+    for(unsigned long i=0 ; i<qx*qy; i++)
     {
-        if (i < qx*qy)    b(i) = bc(i) + f(i)*2.0*h;
+        b->insert(i) = bc->coeff(i) + f->coeff(i)*2.0*h;
 
     }
 
-    return b;
+
 }
 
-*/
+
 
