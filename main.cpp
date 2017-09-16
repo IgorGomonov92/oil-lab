@@ -14,6 +14,7 @@ using namespace Eigen;
 int main(int argc, char **argv)
 {
 
+    Eigen::setNbThreads(omp_get_max_threads());
 
     VectorXd u, u1; //неизв векторы ур ий Лапласа и Пуассона
     double h=1.0; // шаг сетки
@@ -26,17 +27,27 @@ int main(int argc, char **argv)
 
 
     Construct_matrix_Laplace(&AL);
+    Construct_BC_Laplace(&bc);
+    Construct_load_Laplace(h, &b, &bc);
 
     ILUMAT.setFillfactor(7);
     ILUMAT.compute(AL);
 
+    BiCGSTAB< SparseMatrix<double>, Eigen::IncompleteLUT< double > > solver;
+
+    solver.preconditioner();
+
+    solver.setTolerance(2.e-5);
+    u = solver.compute( AL ).solve(b);
+
     std::cout<< AL;
+    std::cout<< u;
 //    A1 = Construct_matrix_Poisson();
 
 /*
-    bc = Construct_BC_Laplace();
+
     bc1 = Construct_BC_Poisson();
-    b = Construct_load_Laplace(h, bc);
+
 
     // настраиваем вывод
     std::cout.precision(3);

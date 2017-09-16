@@ -11,7 +11,7 @@
 
 using namespace Eigen;
 
-SpMat BiCGSTAB(SpMat a, SpMat b);
+//SpMat BiCGSTAB(SpMat a, SpMat b);
 //void Print_matrix(SparseMatrix<double> a);
 void Construct_matrix_Laplace(SparseMatrix<double> * a);
 void Construct_matrix_Poisson(SparseMatrix<double> * a1);

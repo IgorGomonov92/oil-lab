@@ -15,11 +15,11 @@ using namespace Eigen;
 
 
 // реализация метода BiCGSTAB
-
+/*
 SpMat BiCGSTAB(SpMat a, SpMat b) {
         SpMat r, r0, u0, rt, p, p0, v, v0, prom1, prom2, s, t, u;
         double alpha0 = 1, alpha, beta = 0, ro0 = 1, ro, w, w0 = 1;
-/*
+
         p.resize(a.size1(), true);
         u0.resize(a.size1(), true);
         v0.resize(a.size1(), true);
@@ -57,9 +57,9 @@ SpMat BiCGSTAB(SpMat a, SpMat b) {
         } while (norm_2(r) / norm_2(b) > 1.0e-5);
         std::cout <<std::endl << i << std::endl;
         return u;
-*/
-}
 
+}
+*/
 
 
 // собираем матрицу СЛАУ для ур ия лапласа
@@ -158,7 +158,7 @@ void Construct_load_Laplace(double h, SparseVector<double> * b, SparseVector<dou
 
     for(int i=0 ; i<qx*qy; i++)
     {
-        b->insert(i) = 2*h*b->coeff(i);
+        b->insert(i) = 2*h*bc->coeff(i);
     }
 
 
