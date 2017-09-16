@@ -1,12 +1,12 @@
 //
 // Created by gomonov on 11.09.17.
 //
-#include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/io.hpp>
+//#include <boost/numeric/ublas/matrix.hpp>
+//#include <boost/numeric/ublas/io.hpp>
 #include "functions.h"
 #include <omp.h>
 
-#include "/home/igor/My_linalg/my_linalg.cpp"
+//#include "/home/igor/My_linalg/my_linalg.cpp"
 #include "/home/igor/Eigen/Eigen/SparseCore"
 
 
@@ -85,7 +85,7 @@ void Construct_matrix_Laplace(SparseMatrix<double> * a )
                 if (j<qy)       a->insert(row,row+qx) = 1;
                 if (i<qx)       a->insert(row,row+1) = 1;
                 //implementing Neumann B.C.
-                if (k<qz && row<qx*qy)    a->insert(row,row+qx*qy) = 1;
+                if (k<qz && row<qx*qy)    a->insert(row,row+qx*qy) = 2;
                 row++;
 
             }
