@@ -8,21 +8,23 @@
 #include "/home/igor/Eigen/Eigen/SparseCore"
 #include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
 //#include "../../My_linalg/my_linalg.h"
+#include <chrono>
 
 using namespace Eigen;
+using namespace std::chrono;
 
 int main(int argc, char **argv)
 {
 
-    Eigen::initParallel();
-    omp_set_num_threads(2);
-    Eigen::setNbThreads(2);
+
+   // omp_set_num_threads(2);
+    //Eigen::setNbThreads(2);
 
     VectorXd u, u1; //неизв векторы ур ий Лапласа и Пуассона
     double h=1.0; // шаг сетки
     SpMat AL(n, n);
     SpMat AP(n, n); // матрицы для решения уравнений Лапласа и Пуассона соотв
-    Eigen::IncompleteLUT< double > ILUMAT;
+
     VectorXd  bc(n) , bc1(n); // граничные условия для задач Лапласа и Дирихле
     VectorXd b(n), b1(n); //векторы нагрузки для ур Лапласа и Пуассона соотв
     VectorXd f(n); // правая часть уравнения пуассона
@@ -33,15 +35,31 @@ int main(int argc, char **argv)
     //Construct_BC_Laplace(&bc);
     //Construct_load_Laplace(h, &b, &bc);
 
-    ILUMAT.setFillfactor(7);
-    ILUMAT.compute(AL);
 
     BiCGSTAB< SparseMatrix<double,RowMajor>, Eigen::IncompleteLUT< double > > solver;
 
+    solver.preconditioner().setFillfactor(7);
+    solver.preconditioner().compute(AL);
 
-    solver.setMaxIterations(100000000000);
-    //solver.setTolerance(2.e-15);
-    u = solver.compute( AL ).solve(b);
+    solver.setMaxIterations(100000);
+    solver.setTolerance(2.e-45);
+
+    solver.compute( AL );
+
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+
+
+   // #pragma omp parallel
+    u = solver.solve(b);
+
+
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+    auto duration = duration_cast<milliseconds>( t2 - t1 ).count();
+
+    std::cout << duration;
+
+    std::cout<<' '<< solver.iterations() <<' ' << Eigen::nbThreads();
 
     //std::cout<< AL;
    // std::cout<< u;
