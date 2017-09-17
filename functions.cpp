@@ -63,7 +63,7 @@ SpMat BiCGSTAB(SpMat a, SpMat b) {
 
 
 // собираем матрицу СЛАУ для ур ия лапласа
-void Construct_matrix_Laplace(SparseMatrix<double> * a )
+void Construct_matrix_Laplace(SparseMatrix<double,Eigen::RowMajor> * a )
 {
 
     int row=0;
@@ -98,7 +98,7 @@ void Construct_matrix_Laplace(SparseMatrix<double> * a )
     //return a;
 }
 
-void Construct_matrix_Poisson(SparseMatrix<double> * a )
+void Construct_matrix_Poisson(SparseMatrix<double,Eigen::RowMajor> * a )
 {
 
     int row=0;

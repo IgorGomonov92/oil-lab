@@ -14,34 +14,37 @@ using namespace Eigen;
 int main(int argc, char **argv)
 {
 
-    Eigen::setNbThreads(omp_get_max_threads());
+    Eigen::initParallel();
+    omp_set_num_threads(2);
+    Eigen::setNbThreads(2);
 
     VectorXd u, u1; //неизв векторы ур ий Лапласа и Пуассона
     double h=1.0; // шаг сетки
     SpMat AL(n, n);
     SpMat AP(n, n); // матрицы для решения уравнений Лапласа и Пуассона соотв
     Eigen::IncompleteLUT< double > ILUMAT;
-    SparseVector<double>  bc(n) , bc1(n); // граничные условия для задач Лапласа и Дирихле
-    SparseVector<double> b(n), b1(n); //векторы нагрузки для ур Лапласа и Пуассона соотв
-    SparseVector<double> f(n); // правая часть уравнения пуассона
+    VectorXd  bc(n) , bc1(n); // граничные условия для задач Лапласа и Дирихле
+    VectorXd b(n), b1(n); //векторы нагрузки для ур Лапласа и Пуассона соотв
+    VectorXd f(n); // правая часть уравнения пуассона
 
+    b.fill(1);
 
     Construct_matrix_Laplace(&AL);
-    Construct_BC_Laplace(&bc);
-    Construct_load_Laplace(h, &b, &bc);
+    //Construct_BC_Laplace(&bc);
+    //Construct_load_Laplace(h, &b, &bc);
 
     ILUMAT.setFillfactor(7);
     ILUMAT.compute(AL);
 
     BiCGSTAB< SparseMatrix<double,RowMajor>, Eigen::IncompleteLUT< double > > solver;
 
-    solver.preconditioner();
 
-    solver.setTolerance(2.e-5);
+    solver.setMaxIterations(100000000000);
+    //solver.setTolerance(2.e-15);
     u = solver.compute( AL ).solve(b);
 
-    std::cout<< AL;
-    std::cout<< u;
+    //std::cout<< AL;
+   // std::cout<< u;
 //    A1 = Construct_matrix_Poisson();
 
 /*

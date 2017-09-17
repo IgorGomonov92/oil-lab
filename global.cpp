@@ -5,7 +5,7 @@
 
 //размеры сетки - глоб константы
 
-const long qx=30, qy=40, qz=50;
+const long qx=20, qy=20, qz=20;
 const long n = qx * qy * qz;
 
 typedef Eigen::SparseMatrix<double,Eigen::RowMajor> SpMat;

@@ -13,8 +13,8 @@ using namespace Eigen;
 
 //SpMat BiCGSTAB(SpMat a, SpMat b);
 //void Print_matrix(SparseMatrix<double> a);
-void Construct_matrix_Laplace(SparseMatrix<double> * a);
-void Construct_matrix_Poisson(SparseMatrix<double> * a1);
+void Construct_matrix_Laplace(SparseMatrix<double,Eigen::RowMajor> * a);
+void Construct_matrix_Poisson(SparseMatrix<double,Eigen::RowMajor> * a1);
 
 void Construct_BC_Laplace(SparseVector<double> * b);
 void Construct_BC_Poisson(SparseVector<double> * b);
