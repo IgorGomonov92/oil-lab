@@ -17,10 +17,10 @@ int main(int argc, char **argv)
 {
 
 
-   // omp_set_num_threads(2);
-    //Eigen::setNbThreads(2);
+    omp_set_num_threads(8);
+    Eigen::setNbThreads(8);
 
-    VectorXd u, u1; //неизв векторы ур ий Лапласа и Пуассона
+    VectorXd u(n), u1(n); //неизв векторы ур ий Лапласа и Пуассона
     double h=1.0; // шаг сетки
     SpMat AL(n, n);
     SpMat AP(n, n); // матрицы для решения уравнений Лапласа и Пуассона соотв
@@ -41,15 +41,16 @@ int main(int argc, char **argv)
     solver.preconditioner().setFillfactor(7);
     solver.preconditioner().compute(AL);
 
-    solver.setMaxIterations(100000);
-    solver.setTolerance(2.e-45);
+
+    solver.setMaxIterations(100000000);
+    solver.setTolerance(2.e-50);
 
     solver.compute( AL );
 
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
 
-   // #pragma omp parallel
+
     u = solver.solve(b);
 
 
