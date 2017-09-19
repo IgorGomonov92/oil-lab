@@ -6,7 +6,7 @@ include_directories(/home/igor/Eigen/Eigen)
 set(CMAKE_CXX_STANDARD 17)
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fopenmp   -DMKL_ILP64 -m64 -I${MKLROOT}/include")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fopenmp")
 
 set(SOURCE_FILES main.cpp functions.h functions.cpp global.cpp)
 add_executable(FDM ${SOURCE_FILES})

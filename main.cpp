@@ -28,34 +28,34 @@ int main(int argc, char **argv)
     VectorXd  bc(n) , bc1(n); // граничные условия для задач Лапласа и Дирихле
     VectorXd b(n), b1(n); //векторы нагрузки для ур Лапласа и Пуассона соотв
     VectorXd f(n); // правая часть уравнения пуассона
+    VectorXd initGuess(n); // начальное значение для солвера
 
-    b.fill(1);
+    b.fill(1); //temporary
+    initGuess.fill(-1/6);
 
     Construct_matrix_Laplace(&AL);
     //Construct_BC_Laplace(&bc);
     //Construct_load_Laplace(h, &b, &bc);
 
 
-    BiCGSTAB< SparseMatrix<double,RowMajor>, Eigen::IncompleteLUT< double > > solver;
-
-    solver.preconditioner().setFillfactor(7);
-    solver.preconditioner().compute(AL);
-
-
+    BiCGSTAB< SparseMatrix<double,RowMajor>/*, Eigen::IncompleteLUT< double > */ > solver;
     solver.setMaxIterations(100000000);
-    solver.setTolerance(2.e-50);
+    solver.setTolerance(2.e-15);
 
-    solver.compute( AL );
+    //solver.preconditioner().setFillfactor(7);
+    //solver.preconditioner().compute(AL);
+
+    solver.compute(AL);
+
+    solver.solveWithGuess(b, initGuess);
 
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
-
-
 
     u = solver.solve(b);
 
 
-    high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>( t2 - t1 ).count();
 
     std::cout << duration;
