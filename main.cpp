@@ -1,14 +1,14 @@
 
 #include <iostream>
-//#include <boost/numeric/ublas/matrix.hpp>
-//#include <boost/numeric/ublas/io.hpp>
 #include "functions.h"
 #include <omp.h>
 
 #include "/home/igor/Eigen/Eigen/SparseCore"
 #include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
-//#include "../../My_linalg/my_linalg.h"
+#include "../../My_linalg/my_linalg.h"
 #include <chrono>
+
+
 
 using namespace Eigen;
 using namespace std::chrono;
