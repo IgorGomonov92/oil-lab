@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
     BiCGSTAB< SparseMatrix<double,RowMajor>/*, Eigen::IncompleteLUT< double > */ > solver;
     solver.setMaxIterations(100000000);
-    solver.setTolerance(2.e-15);
+    solver.setTolerance(2.e-5);
 
     //solver.preconditioner().setFillfactor(7);
     //solver.preconditioner().compute(AL);
@@ -56,11 +56,12 @@ int main(int argc, char **argv)
 
 
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
-    auto duration = duration_cast<milliseconds>( t2 - t1 ).count();
+    auto duration = duration_cast<seconds>( t2 - t1 ).count();
 
     std::cout << duration;
 
-    std::cout<<' '<< solver.iterations() <<' ' << Eigen::nbThreads();
+    std::cout<<' '<< solver.iterations();
+    std::cout<<std::endl<< AL;
 
     //std::cout<< AL;
    // std::cout<< u;
