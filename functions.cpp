@@ -20,7 +20,6 @@ void Construct_matrix_Laplace(SparseMatrix<double > * a )
 {
 
     int row=0;
-   // SpMat a(n,n);// матрица СЛАУ
     a->reserve(VectorXi::Constant(n,7));
 
 
@@ -55,7 +54,6 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
 {
 
     int row=0;
-    // SpMat a(n,n);// матрица СЛАУ
     a->reserve(VectorXi::Constant(n,7));
 
 
@@ -81,7 +79,6 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
 
 
     a->makeCompressed();
-    //return a;
 }
 
 void Construct_guess(VectorXd * initGuess)

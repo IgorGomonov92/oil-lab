@@ -9,9 +9,9 @@
 
 using namespace Eigen;
 
-void Construct_matrix_Laplace(SparseMatrix<double > * a);
-void Construct_matrix_Poisson(SparseMatrix<double > * a1);
-VectorXd * Solve_Laplace( );
+void Construct_matrix_Laplace(SparseMatrix<double > * A);
+void Construct_matrix_Poisson(SparseMatrix<double > * A1);
+VectorXd * Solve_Laplace(SparseMatrix<double > * A, VectorXd * b );
 void Construct_guess(VectorXd * initGuess);
 void Construct_BC_Laplace(SparseVector<double> * bc);
 void Construct_BC_Poisson(VectorXd * bc);
