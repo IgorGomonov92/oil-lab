@@ -140,21 +140,30 @@ void Construct_load_Poisson( VectorXd * b1, VectorXd * bc1, VectorXd * f)
 }
 
 
-VectorXd * Solve_Laplace(SparseMatrix<double > * AL, VectorXd * b, VectorXd  * initGuess )
+VectorXd  Solve_Laplace()
 {
+    SpMat  AL(n, n);
+    SparseVector<double>  bc(n);
     VectorXd u(n); //неизв векторы ур ия Лапласа
+    VectorXd b(n);
+    VectorXd initGuess(n); // начальное значение для солвера
+    Construct_guess( &initGuess);
+    Construct_matrix_Laplace(&AL);
+    Construct_BC_Laplace(&bc);
+    Construct_load_Laplace( &b, &bc );
+
     u.fill(0);
     // Решаем уравнение Лапласа
     BiCGSTAB< SparseMatrix<double,RowMajor>> solverL;
 // устанавливаем требуемую точность
     solverL.setTolerance(error);
-    solverL.compute(*AL);
+    solverL.compute(AL);
 // устанавливаем начальное приближение
-    solverL.solveWithGuess(*b, *initGuess);
+    solverL.solveWithGuess(b, initGuess);
 //запускаем солвер
     high_resolution_clock::time_point tL1 = high_resolution_clock::now();
  //--------------
-    u = solverL.solve(*b);
+    u = solverL.solve(b);
  //--------------
     high_resolution_clock::time_point tL2 = high_resolution_clock::now();
 //считаем время решения
@@ -162,33 +171,46 @@ VectorXd * Solve_Laplace(SparseMatrix<double > * AL, VectorXd * b, VectorXd  * i
     std::cout << std::endl << durationL << std::endl;
 // заккончили обсчет ур я Лапаласа
 
-    return &u;
+    return u;
 
 }
 
-
-VectorXd * Solve_Poissons(SparseMatrix<double > * AL, VectorXd * b, VectorXd  * initGuess )
+VectorXd  Solve_Poissons()
 {
-    VectorXd u(n); //неизв векторы ур ия Лапласа
-    u.fill(0);
-    // Решаем уравнение Лапласа
-    BiCGSTAB< SparseMatrix<double,RowMajor>> solverL;
-// устанавливаем требуемую точность
-    solverL.setTolerance(error);
-    solverL.compute(*AL);
-// устанавливаем начальное приближение
-    solverL.solveWithGuess(*b, *initGuess);
-//запускаем солвер
-    high_resolution_clock::time_point tL1 = high_resolution_clock::now();
-    //--------------
-    u = solverL.solve(*b);
-    //--------------
-    high_resolution_clock::time_point tL2 = high_resolution_clock::now();
-//считаем время решения
-    auto durationL = duration_cast<seconds>( tL2 - tL1 ).count();
-    std::cout << std::endl << durationL << std::endl;
-// заккончили обсчет ур я Лапаласа
+    SpMat  AP(n, n);
+    SparseVector<double>  bc1(n);
+    VectorXd u1(n); //неизв векторы ур ия Лапласа
+    VectorXd b1(n);
+    VectorXd initGuess(n); // начальное значение для солвера
+    Construct_guess( &initGuess);
+    Construct_matrix_Poisson(&AP);
+    Construct_BC_Poisson(&bc1);
+    Construct_load_Laplace( &b1, &bc1 );
 
-    return &u;
+    u1.fill(0);
+
+//--------решаем уравнение Пуассона в каждом слое, где упругие параметры = const
+
+    BiCGSTAB< SparseMatrix<double,RowMajor>, Eigen::IncompleteLUT< double > > solverP;
+// устанавливаем треб точность
+    solverP.setTolerance(error);
+// считаем предобуславливатель
+    solverP.preconditioner().setFillfactor(7);
+    solverP.preconditioner().compute(AP);
+// раскладываем матрицу
+    solverP.compute(AP);
+// устанавливаем начальное приближение
+    solverP.solveWithGuess(b1, initGuess);
+//запускаем солвер
+    high_resolution_clock::time_point tP1 = high_resolution_clock::now();
+    //--------------
+    u1 = solverP.solve(b1);
+    //--------------
+    high_resolution_clock::time_point tP2 = high_resolution_clock::now();
+//считаем время решения
+    auto durationP = duration_cast<seconds>( tP2 - tP1 ).count();
+    std::cout << std::endl << durationP << std::endl;
+
+    return u1;
 
 }
