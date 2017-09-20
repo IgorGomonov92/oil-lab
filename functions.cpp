@@ -90,16 +90,6 @@ void Construct_guess(VectorXd * initGuess)
         initGuess->coeffRef(i) = -1.0/6.0;
 }
 
-void Construct_load_Laplace(double h, SparseVector<double> * b, SparseVector<double> * bc)
-{
-
-    for(int i=0 ; i<qx*qy; i++)
-    {
-        b->insert(i) = 2*h*bc->coeff(i);
-    }
-
-
-}
 /*
 // задаем граничный условия
 */
@@ -125,11 +115,24 @@ void Construct_BC_Poisson(SparseVector<double> * bc)
 
 }
 
-void Construct_load_Poisson(double h, SparseVector<double> * b, SparseVector<double> * bc, SparseVector<double> * f)
+void Construct_load_Laplace(double h, VectorXd * b, SparseVector<double> * bc)
 {
+    b->fill(0);
+    for(int i=0 ; i<qx*qy; i++)
+    {
+        b->coeffRef(i) = 2*h*bc->coeff(i);
+    }
+
+
+}
+
+
+void Construct_load_Poisson(double h, VectorXd * b, SparseVector<double> * bc, VectorXd * f)
+{
+    b->fill(0);
     for(unsigned long i=0 ; i<qx*qy; i++)
     {
-        b->insert(i) = bc->coeff(i) + f->coeff(i)*2.0*h;
+        b->coeffRef(i) = bc->coeff(i) + f->coeffRef(i)*2.0*h;
 
     }
 
