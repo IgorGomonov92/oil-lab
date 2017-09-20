@@ -59,7 +59,7 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
     a->reserve(VectorXi::Constant(n,7));
 
 
-    for(int k=1; k<=2; k++)
+    for(int k=1; k<=qz; k++)
     {
         for(int j=1; j<=qy; j++)
         {
@@ -85,10 +85,10 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
 
 void Construct_f( std::vector<VectorXd> f)
 {
-    for(int i=1;i<qz;i++)
+    for(int i=0;i<qx*qy;i++)
     {
         f[i].resize(n);
-        f[i].fill(1.0/i);
+        f[i].fill(1.0/(i+1));
     }
 
 }
@@ -138,13 +138,15 @@ void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc)
 }
 
 
-void Construct_load_Poisson( VectorXd * b1, VectorXd * bc1, VectorXd * f)
+void Construct_load_Poisson( VectorXd * b1, VectorXd * bc1, std::vector<VectorXd>  * f)
 {
-    std::cout <<'|'<< f->size() << '|';
+    f->at(0).resize(n);
+    f->at(0).fill(1);
     b1->fill(0);
-    for(int i=0 ; i<qx*qy; i++)
+    f->at(1).fill(0);
+    for(int i=0 ; i<qz; i++)
     {
-        //b1->coeffRef(i) = bc1->coeffRef(i) + f->coeff(i)*2.0*h;
+        b1->coeffRef(i) = bc1->coeff(i) + f->at(0).coeff(i)*2.0*h;
 
     }
 
@@ -193,7 +195,7 @@ VectorXd  Solve_Poissons()
     VectorXd bcP(n);
     VectorXd uP(n); //неизв векторы ур ия Пуассона
     VectorXd bP(n);
-    std::vector<VectorXd> f(qz);
+    std::vector<VectorXd> f(n);
 
     VectorXd initGuess(n); // начальное значение для солвера
 
@@ -202,7 +204,7 @@ VectorXd  Solve_Poissons()
     Construct_guess( &initGuess);
     Construct_matrix_Poisson(&AP);
     Construct_BC_Poisson(&bcP);
-    Construct_load_Poisson( &bP, &bcP, &f[0] );
+    Construct_load_Poisson( &bP, &bcP, &f );
 
     uP.fill(0);
 
@@ -213,6 +215,7 @@ VectorXd  Solve_Poissons()
     solverP.setTolerance(error);
 // считаем предобуславливатель
     solverP.preconditioner().setFillfactor(7);
+
     solverP.preconditioner().compute(AP);
 // раскладываем матрицу
     solverP.compute(AP);
@@ -221,12 +224,15 @@ VectorXd  Solve_Poissons()
 //запускаем солвер
     high_resolution_clock::time_point tP1 = high_resolution_clock::now();
     //--------------
+    std::cout << bP.size()<<'|'<< uP.size();
+    std::cout << bP << "-----------" << uP;
     for(int i=1; i<=qz; i++)
     {
         uP = solverP.solve(bP);
         bcP = uP;
-        Construct_load_Poisson(&bP, &bcP, &f[i]);
+        Construct_load_Poisson(&bP, &bcP, &f);
     }
+
     //--------------
     high_resolution_clock::time_point tP2 = high_resolution_clock::now();
 //считаем время решения
