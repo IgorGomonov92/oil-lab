@@ -106,11 +106,12 @@ void Construct_BC_Laplace(SparseVector<double> * bc)
 
 // задаем граничные условия
 
-void Construct_BC_Poisson(SparseVector<double> * bc)
+void Construct_BC_Poisson(VectorXd * bc)
 {
+    bc->fill(0);
     for(int i=0; i<qz; i++)
     {
-        bc->insert(i,0) = .1;
+        bc->coeffRef(i,0) = .1;
     }
 
 }
@@ -178,16 +179,18 @@ VectorXd  Solve_Laplace()
 VectorXd  Solve_Poissons()
 {
     SpMat  AP(n, n);
-    SparseVector<double>  bc1(n);
-    VectorXd u1(n); //неизв векторы ур ия Лапласа
-    VectorXd b1(n);
+    VectorXd bcP(n);
+    VectorXd uP(n); //неизв векторы ур ия Лапласа
+    VectorXd bP(n);
+    std::vector<VectorXd> f;
+
     VectorXd initGuess(n); // начальное значение для солвера
     Construct_guess( &initGuess);
     Construct_matrix_Poisson(&AP);
-    Construct_BC_Poisson(&bc1);
-    Construct_load_Laplace( &b1, &bc1 );
+    Construct_BC_Poisson(&bcP);
+    Construct_load_Poisson( &bP, &bcP, &f[0] );
 
-    u1.fill(0);
+    uP.fill(0);
 
 //--------решаем уравнение Пуассона в каждом слое, где упругие параметры = const
 
@@ -200,17 +203,22 @@ VectorXd  Solve_Poissons()
 // раскладываем матрицу
     solverP.compute(AP);
 // устанавливаем начальное приближение
-    solverP.solveWithGuess(b1, initGuess);
+    solverP.solveWithGuess(bP, initGuess);
 //запускаем солвер
     high_resolution_clock::time_point tP1 = high_resolution_clock::now();
     //--------------
-    u1 = solverP.solve(b1);
+    for(int i=1; i<qz; i++)
+    {
+        uP = solverP.solve(bP);
+        bcP = uP;
+        Construct_load_Poisson(&bP, &bcP, &f[i]);
+    }
     //--------------
     high_resolution_clock::time_point tP2 = high_resolution_clock::now();
 //считаем время решения
     auto durationP = duration_cast<seconds>( tP2 - tP1 ).count();
     std::cout << std::endl << durationP << std::endl;
 
-    return u1;
+    return uP;
 
 }
