@@ -56,10 +56,10 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
 {
 
     int row=0;
-    a->reserve(VectorXi::Constant(n,7));
+    a->reserve(VectorXi::Constant(nP,7));
 
 
-    for(int k=1; k<=qz; k++)
+    for(int k=1; k<=2; k++)
     {
         for(int j=1; j<=qy; j++)
         {
@@ -69,7 +69,7 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
                 if (j>1)        a->insert(row,row-qx) = 1;
                 if (i>1)        a->insert(row,row-1) = 1;
                 a->insert(row,row) = -6;
-                if (k<qz && row>=qx*qy)       a->insert(row,row+qx*qy) = 1;
+                if (k<2 && row>=qx*qy)       a->insert(row,row+qx*qy) = 1;
                 if (j<qy)       a->insert(row,row+qx) = 1;
                 if (i<qx)       a->insert(row,row+1) = 1;
                 row++;
@@ -87,18 +87,26 @@ void Construct_f( std::vector<VectorXd> f)
 {
     for(int i=0;i<qx*qy;i++)
     {
-        f[i].resize(n);
+        f[i].resize(nP);
         f[i].fill(1.0/(i+1));
     }
 
 }
 
-void Construct_guess(VectorXd * initGuess)
+void Construct_guess_L(VectorXd * initGuess)
 {
     initGuess->fill(0);
     for(int i=0;i<n;i++)
         initGuess->coeffRef(i) = -1.0/6.0;
 }
+
+void Construct_guess_P(VectorXd * initGuess)
+{
+    initGuess->fill(0);
+    for(int i=0;i<nP;i++)
+        initGuess->coeffRef(i) = -1.0/6.0;
+}
+
 
 /*
 // задаем граничный условия
@@ -140,7 +148,7 @@ void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc)
 
 void Construct_load_Poisson( VectorXd * b1, VectorXd * bc1, std::vector<VectorXd>  * f)
 {
-    f->at(0).resize(n);
+    f->at(0).resize(nP);
     f->at(0).fill(1);
     b1->fill(0);
     f->at(1).fill(0);
@@ -161,7 +169,7 @@ VectorXd  Solve_Laplace()
     VectorXd u(n); //неизв векторы ур ия Лапласа
     VectorXd b(n);
     VectorXd initGuess(n); // начальное значение для солвера
-    Construct_guess( &initGuess);
+    Construct_guess_L( &initGuess);
     Construct_matrix_Laplace(&AL);
     Construct_BC_Laplace(&bc);
     Construct_load_Laplace( &b, &bc );
@@ -191,17 +199,17 @@ VectorXd  Solve_Laplace()
 
 VectorXd  Solve_Poissons()
 {
-    SpMat  AP(n, n);
-    VectorXd bcP(n);
-    VectorXd uP(n); //неизв векторы ур ия Пуассона
-    VectorXd bP(n);
-    std::vector<VectorXd> f(n);
+    SpMat  AP(nP, nP);
+    VectorXd bcP(nP);
+    VectorXd uP(nP); //неизв векторы ур ия Пуассона
+    VectorXd bP(nP);
+    std::vector<VectorXd> f(nP);
 
-    VectorXd initGuess(n); // начальное значение для солвера
+    VectorXd initGuess(nP); // начальное значение для солвера
 
     Construct_f( f);
 
-    Construct_guess( &initGuess);
+    Construct_guess_P( &initGuess);
     Construct_matrix_Poisson(&AP);
     Construct_BC_Poisson(&bcP);
     Construct_load_Poisson( &bP, &bcP, &f );
@@ -224,8 +232,6 @@ VectorXd  Solve_Poissons()
 //запускаем солвер
     high_resolution_clock::time_point tP1 = high_resolution_clock::now();
     //--------------
-    std::cout << bP.size()<<'|'<< uP.size();
-    std::cout << bP << "-----------" << uP;
     for(int i=1; i<=qz; i++)
     {
         uP = solverP.solve(bP);
