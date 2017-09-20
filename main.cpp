@@ -23,6 +23,6 @@ int main(int argc, char **argv)
     u = Solve_Laplace();
     u1 = Solve_Poissons();
 
-    std::cout<< u <<std::endl << "----------" <<std::endl << u1;
+   // std::cout<< u <<std::endl << "----------" <<std::endl << u1;
         return 0;
 }

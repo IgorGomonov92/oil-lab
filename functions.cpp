@@ -50,7 +50,6 @@ void Construct_matrix_Laplace(SparseMatrix<double > * a )
 
 
     a->makeCompressed();
-    //return a;
 }
 
 void Construct_matrix_Poisson(SparseMatrix<double > * a )
@@ -60,7 +59,7 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
     a->reserve(VectorXi::Constant(n,7));
 
 
-    for(int k=1; k<=qz; k++)
+    for(int k=1; k<=2; k++)
     {
         for(int j=1; j<=qy; j++)
         {
@@ -84,8 +83,19 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
     a->makeCompressed();
 }
 
+void Construct_f( std::vector<VectorXd> f)
+{
+    for(int i=1;i<qz;i++)
+    {
+        f[i].resize(n);
+        f[i].fill(1.0/i);
+    }
+
+}
+
 void Construct_guess(VectorXd * initGuess)
 {
+    initGuess->fill(0);
     for(int i=0;i<n;i++)
         initGuess->coeffRef(i) = -1.0/6.0;
 }
@@ -130,10 +140,11 @@ void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc)
 
 void Construct_load_Poisson( VectorXd * b1, VectorXd * bc1, VectorXd * f)
 {
+    std::cout <<'|'<< f->size() << '|';
     b1->fill(0);
     for(int i=0 ; i<qx*qy; i++)
     {
-        b1->coeffRef(i) = bc1->coeffRef(i) + f->coeffRef(i)*2.0*h;
+        //b1->coeffRef(i) = bc1->coeffRef(i) + f->coeff(i)*2.0*h;
 
     }
 
@@ -180,11 +191,14 @@ VectorXd  Solve_Poissons()
 {
     SpMat  AP(n, n);
     VectorXd bcP(n);
-    VectorXd uP(n); //неизв векторы ур ия Лапласа
+    VectorXd uP(n); //неизв векторы ур ия Пуассона
     VectorXd bP(n);
-    std::vector<VectorXd> f;
+    std::vector<VectorXd> f(qz);
 
     VectorXd initGuess(n); // начальное значение для солвера
+
+    Construct_f( f);
+
     Construct_guess( &initGuess);
     Construct_matrix_Poisson(&AP);
     Construct_BC_Poisson(&bcP);
@@ -207,7 +221,7 @@ VectorXd  Solve_Poissons()
 //запускаем солвер
     high_resolution_clock::time_point tP1 = high_resolution_clock::now();
     //--------------
-    for(int i=1; i<qz; i++)
+    for(int i=1; i<=qz; i++)
     {
         uP = solverP.solve(bP);
         bcP = uP;
