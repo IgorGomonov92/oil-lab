@@ -17,10 +17,9 @@ int main(int argc, char **argv)
 {
 
 
-    omp_set_num_threads(8);
-    Eigen::setNbThreads(8);
+    omp_set_num_threads(omp_get_max_threads());
+    Eigen::setNbThreads(omp_get_max_threads());
 
-    VectorXd u(n), u1(n); //неизв векторы ур ий Лапласа и Пуассона
     SpMat AL(n, n);
     SpMat AP(n, n); // матрицы для решения уравнений Лапласа и Пуассона соотв
 
@@ -30,31 +29,13 @@ int main(int argc, char **argv)
     VectorXd f(n); // правая часть уравнения пуассона
     VectorXd initGuess(n); // начальное значение для солвера
 
+//  заполняес параметры системы
     Construct_guess( &initGuess);
-
     Construct_matrix_Laplace(&AL);
-
     Construct_matrix_Poisson(&AP);
-
     Construct_BC_Laplace(&bc);
     Construct_load_Laplace( &b, &bc );
     Construct_load_Poisson( &b1, &bc1, &f );
-
-    // Решаем уравнение Лапласа
-    BiCGSTAB< SparseMatrix<double,RowMajor>> solverL;
-// устанавливаем требуемую точность
-    solverL.setTolerance(error);
-    solverL.compute(AL);
-// устанавливаем начальное приближение
-    solverL.solveWithGuess(b, initGuess);
-//запускаем солвер
-    high_resolution_clock::time_point tL1 = high_resolution_clock::now();
-    u = solverL.solve(b);
-    high_resolution_clock::time_point tL2 = high_resolution_clock::now();
-//считаем время решения
-    auto durationL = duration_cast<seconds>( tL2 - tL1 ).count();
-    std::cout << std::endl << durationL << std::endl;
-// заккончили обсчет ур я Лапаласа
 
 //--------решаем уравнение Пуассона в каждом слое, где упругие параметры = const
 

@@ -4,11 +4,14 @@
 #include "functions.h"
 #include <omp.h>
 
+#include "/home/igor/Eigen/Eigen/SparseCore"
+#include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
 
 #include "/home/igor/My_linalg/my_linalg.cpp"
 #include "/home/igor/Eigen/Eigen/SparseCore"
+#include <chrono>
 
-
+using namespace std::chrono;
 using namespace Eigen;
 
 
@@ -137,4 +140,55 @@ void Construct_load_Poisson( VectorXd * b1, VectorXd * bc1, VectorXd * f)
 }
 
 
+VectorXd * Solve_Laplace(SparseMatrix<double > * AL, VectorXd * b, VectorXd  * initGuess )
+{
+    VectorXd u(n); //неизв векторы ур ия Лапласа
+    u.fill(0);
+    // Решаем уравнение Лапласа
+    BiCGSTAB< SparseMatrix<double,RowMajor>> solverL;
+// устанавливаем требуемую точность
+    solverL.setTolerance(error);
+    solverL.compute(*AL);
+// устанавливаем начальное приближение
+    solverL.solveWithGuess(*b, *initGuess);
+//запускаем солвер
+    high_resolution_clock::time_point tL1 = high_resolution_clock::now();
+ //--------------
+    u = solverL.solve(*b);
+ //--------------
+    high_resolution_clock::time_point tL2 = high_resolution_clock::now();
+//считаем время решения
+    auto durationL = duration_cast<seconds>( tL2 - tL1 ).count();
+    std::cout << std::endl << durationL << std::endl;
+// заккончили обсчет ур я Лапаласа
 
+    return &u;
+
+}
+
+
+VectorXd * Solve_Poissons(SparseMatrix<double > * AL, VectorXd * b, VectorXd  * initGuess )
+{
+    VectorXd u(n); //неизв векторы ур ия Лапласа
+    u.fill(0);
+    // Решаем уравнение Лапласа
+    BiCGSTAB< SparseMatrix<double,RowMajor>> solverL;
+// устанавливаем требуемую точность
+    solverL.setTolerance(error);
+    solverL.compute(*AL);
+// устанавливаем начальное приближение
+    solverL.solveWithGuess(*b, *initGuess);
+//запускаем солвер
+    high_resolution_clock::time_point tL1 = high_resolution_clock::now();
+    //--------------
+    u = solverL.solve(*b);
+    //--------------
+    high_resolution_clock::time_point tL2 = high_resolution_clock::now();
+//считаем время решения
+    auto durationL = duration_cast<seconds>( tL2 - tL1 ).count();
+    std::cout << std::endl << durationL << std::endl;
+// заккончили обсчет ур я Лапаласа
+
+    return &u;
+
+}

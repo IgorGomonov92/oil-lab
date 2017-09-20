@@ -11,12 +11,15 @@ using namespace Eigen;
 
 void Construct_matrix_Laplace(SparseMatrix<double > * A);
 void Construct_matrix_Poisson(SparseMatrix<double > * A1);
-VectorXd * Solve_Laplace(SparseMatrix<double > * A, VectorXd * b );
 void Construct_guess(VectorXd * initGuess);
 void Construct_BC_Laplace(SparseVector<double> * bc);
 void Construct_BC_Poisson(VectorXd * bc);
 void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc);
 void Construct_load_Poisson(VectorXd * b, VectorXd * bc, VectorXd * f);
+
+VectorXd * Solve_Laplace(SparseMatrix<double > * AL, VectorXd * b, VectorXd * initGuess);
+//VectorXd * Solve_Poissons(SparseMatrix<double > * AL, VectorXd * b, VectorXd * initGuess);
+
 
 
 #endif //FDM_FUNCTIONS_H
