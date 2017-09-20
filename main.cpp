@@ -24,7 +24,8 @@ int main(int argc, char **argv)
     SpMat AL(n, n);
     SpMat AP(n, n); // матрицы для решения уравнений Лапласа и Пуассона соотв
 
-    SparseVector<double>  bc(n) , bc1(n); // граничные условия для задач Лапласа и Дирихле
+    SparseVector<double>  bc(n);
+    VectorXd bc1(n); // граничные условия для задач Лапласа и Дирихле
     VectorXd b(n), b1(n); //векторы нагрузки для ур Лапласа и Пуассона соотв
     VectorXd f(n); // правая часть уравнения пуассона
     VectorXd initGuess(n); // начальное значение для солвера
@@ -36,12 +37,13 @@ int main(int argc, char **argv)
     Construct_matrix_Poisson(&AP);
 
     Construct_BC_Laplace(&bc);
-    Construct_load_Laplace(h, &b, &bc );
+    Construct_load_Laplace( &b, &bc );
+    Construct_load_Poisson( &b1, &bc1, &f );
 
     // Решаем уравнение Лапласа
     BiCGSTAB< SparseMatrix<double,RowMajor>> solverL;
 // устанавливаем требуемую точность
-    solverL.setTolerance(2.e-5);
+    solverL.setTolerance(error);
     solverL.compute(AL);
 // устанавливаем начальное приближение
     solverL.solveWithGuess(b, initGuess);
@@ -52,13 +54,13 @@ int main(int argc, char **argv)
 //считаем время решения
     auto durationL = duration_cast<seconds>( tL2 - tL1 ).count();
     std::cout << std::endl << durationL << std::endl;
-// заккончили общет ур я Лапаласа
+// заккончили обсчет ур я Лапаласа
 
 //--------решаем уравнение Пуассона в каждом слое, где упругие параметры = const
 
     BiCGSTAB< SparseMatrix<double,RowMajor>, Eigen::IncompleteLUT< double > > solverP;
 // устанавливаем треб точность
-    solverP.setTolerance(2.e-5);
+    solverP.setTolerance(error);
 // считаем предобуславливатель
     solverP.preconditioner().setFillfactor(7);
     solverP.preconditioner().compute(AP);

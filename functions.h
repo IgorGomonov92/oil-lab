@@ -14,9 +14,9 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a1);
 VectorXd * Solve_Laplace( );
 void Construct_guess(VectorXd * initGuess);
 void Construct_BC_Laplace(SparseVector<double> * bc);
-void Construct_BC_Poisson(SparseVector<double> * bc);
-void Construct_load_Laplace(double h, VectorXd * b, SparseVector<double> * bc);
-void Construct_load_Poisson(double h, VectorXd * b, SparseVector<double> * bc, VectorXd * f);
+void Construct_BC_Poisson(VectorXd * bc);
+void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc);
+void Construct_load_Poisson(VectorXd * b, VectorXd * bc, VectorXd * f);
 
 
 #endif //FDM_FUNCTIONS_H

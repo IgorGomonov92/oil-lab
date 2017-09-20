@@ -115,7 +115,7 @@ void Construct_BC_Poisson(SparseVector<double> * bc)
 
 }
 
-void Construct_load_Laplace(double h, VectorXd * b, SparseVector<double> * bc)
+void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc)
 {
     b->fill(0);
     for(int i=0 ; i<qx*qy; i++)
@@ -127,12 +127,12 @@ void Construct_load_Laplace(double h, VectorXd * b, SparseVector<double> * bc)
 }
 
 
-void Construct_load_Poisson(double h, VectorXd * b, SparseVector<double> * bc, VectorXd * f)
+void Construct_load_Poisson( VectorXd * b1, VectorXd * bc1, VectorXd * f)
 {
-    b->fill(0);
-    for(unsigned long i=0 ; i<qx*qy; i++)
+    b1->fill(0);
+    for(int i=0 ; i<qx*qy; i++)
     {
-        b->coeffRef(i) = bc->coeff(i) + f->coeffRef(i)*2.0*h;
+        b1->coeffRef(i) = bc1->coeffRef(i) + f->coeffRef(i)*2.0*h;
 
     }
 
