@@ -83,6 +83,13 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
     a->makeCompressed();
     //return a;
 }
+
+void Construct_guess(VectorXd * initGuess)
+{
+    for(int i=0;i<n;i++)
+        initGuess->coeffRef(i) = -1.0/6.0;
+}
+
 void Construct_load_Laplace(double h, SparseVector<double> * b, SparseVector<double> * bc)
 {
 

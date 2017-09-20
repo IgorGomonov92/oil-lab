@@ -31,37 +31,49 @@ int main(int argc, char **argv)
     VectorXd initGuess(n); // начальное значение для солвера
 
     b.fill(1); //temporary
-    initGuess.fill(-1/6);
+
+    Construct_guess( &initGuess);
+
 
     Construct_matrix_Laplace(&AL);
     //Construct_BC_Laplace(&bc);
     //Construct_load_Laplace(h, &b, &bc);
 
-
-    BiCGSTAB< SparseMatrix<double,RowMajor>/*, Eigen::IncompleteLUT< double > */ > solver;
-    solver.setMaxIterations(100000000);
-    solver.setTolerance(2.e-5);
-
-    //solver.preconditioner().setFillfactor(7);
-    //solver.preconditioner().compute(AL);
-
-    solver.compute(AL);
-
-    solver.solveWithGuess(b, initGuess);
-
+    // Решаем уравнение Лапласа
+    BiCGSTAB< SparseMatrix<double,RowMajor>> solverL;
+// устанавливаем требуемую точность
+    solverL.setTolerance(2.e-5);
+    solverL.compute(AL);
+// устанавливаем начальное приближение
+    solverL.solveWithGuess(b, initGuess);
+//запускаем солвер
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
-
-    u = solver.solve(b);
-
-
-
+    u = solverL.solve(b);
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
-    auto duration = duration_cast<seconds>( t2 - t1 ).count();
+//считаем время решения
+    auto durationL = duration_cast<seconds>( t2 - t1 ).count();
+    std::cout << std::endl << durationL << std::endl;
+// заккончили общет ур я Лапаласа
 
-    std::cout << duration;
+//--------решаем уравнение Пуассона в каждом слое, где упругие параметры = const
 
-    std::cout<<' '<< solver.iterations();
-    std::cout<<std::endl<< AL;
+    BiCGSTAB< SparseMatrix<double,RowMajor>, Eigen::IncompleteLUT< double > > solverP;
+// устанавливаем треб точность
+    solverP.setTolerance(2.e-5);
+// считаем предобуславливатель
+    solverP.preconditioner().setFillfactor(7);
+    solverP.preconditioner().compute(AP);
+// раскладываем матрицу
+    solverP.compute(AP);
+// устанавливаем начальное приближение
+    solverP.solveWithGuess(b, initGuess);
+//запускаем солвер
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+    u = solverP.solve(b);
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+//считаем время решения
+    auto durationP = duration_cast<seconds>( t2 - t1 ).count();
+    std::cout << std::endl << durationP << std::endl;
 
     //std::cout<< AL;
    // std::cout<< u;
