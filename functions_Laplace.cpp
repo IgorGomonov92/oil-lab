@@ -102,11 +102,12 @@ VectorXd Solve_Laplace()
 
     u.fill(0);
     // Решаем уравнение Лапласа
-    BiCGSTAB<SparseMatrix<double, RowMajor>> solverL;
+    BiCGSTAB<SparseMatrix<double, RowMajor> > solverL;
     high_resolution_clock::time_point tL1 = high_resolution_clock::now();
 
-// устанавливаем требуемую точность
+// relative residual error: |Ax-b|/|b|
     solverL.setTolerance(error);
+
     solverL.compute(AL);
 // устанавливаем начальное приближение
     solverL.solveWithGuess(b, initGuess);
@@ -117,7 +118,7 @@ VectorXd Solve_Laplace()
     high_resolution_clock::time_point tL2 = high_resolution_clock::now();
 //считаем время решения
     auto durationL = duration_cast<seconds>(tL2 - tL1).count();
-    std::cout << std::endl << durationL << std::endl;
+    std::cout << std::endl << durationL << "||" << solverL.iterations()<< std::endl;
 // закончили обсчет ур я Лапаласа
 
     return u;

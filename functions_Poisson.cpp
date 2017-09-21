@@ -130,7 +130,7 @@ std::vector<VectorXd> Solve_Poissons() {
 //--------решаем уравнение Пуассона в каждом слое, где упругие параметры = const
 
     BiCGSTAB<SparseMatrix<double, RowMajor>, Eigen::IncompleteLUT<double> > solverP;
-// устанавливаем треб точность
+// relative residual error: |Ax-b|/|b|
     solverP.setTolerance(error);
 // считаем предобуславливатель
     high_resolution_clock::time_point tP1 = high_resolution_clock::now();
@@ -156,7 +156,7 @@ std::vector<VectorXd> Solve_Poissons() {
     high_resolution_clock::time_point tP2 = high_resolution_clock::now();
 //считаем время решения
     auto durationP = duration_cast<seconds>(tP2 - tP1).count();
-    std::cout << std::endl << durationP << std::endl;
+    std::cout << std::endl << durationP << "||" << solverP.iterations()<< std::endl;
 
     return uP;
 
