@@ -8,9 +8,11 @@
 #include "/home/igor/Eigen/Eigen/SparseCore"
 #include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
 
-#include "/home/igor/My_linalg/my_linalg.cpp"
+
 #include "/home/igor/Eigen/Eigen/SparseCore"
 #include <chrono>
+#include "global.cpp"
+
 
 using namespace std::chrono;
 using namespace Eigen;
@@ -55,6 +57,25 @@ void Construct_guess_P(VectorXd *initGuess) {
 
 //--------------------------------------------------------------------------------------
 
+void Construct_f(std::vector<VectorXd> *f) {
+    f->at(0).resize(nP);
+
+    for (int i = 0; i < nP; i++) {
+        f->at(0).coeffRef(i) = 1.0 / (i + 1);
+    }
+
+    for (int i = 1; i <= qz; i++) {
+        f->at(i).resize(nP);
+
+        for (int j = 0; j < nP; j++) {
+            f->at(i).coeffRef(j) = 1.0 / (j + 1);
+        }
+    }
+
+}
+
+//--------------------------------------------------------------------------------------
+
 
 // задаем граничные условия
 void Construct_BC_Poisson(VectorXd *bc) {
@@ -79,6 +100,7 @@ void Construct_load_Poisson(VectorXd *bP, VectorXd *bcP, VectorXd *f) {
 }
 
 //--------------------------------------------------------------------------------------
+
 
 
 std::vector<VectorXd> Solve_Poissons() {

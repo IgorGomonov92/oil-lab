@@ -5,6 +5,7 @@
 #ifndef FDM_FUNCTIONS_H
 #define FDM_FUNCTIONS_H
 #include "/home/igor/Eigen/Eigen/SparseCore"
+#include <iostream>
 
 using namespace Eigen;
 

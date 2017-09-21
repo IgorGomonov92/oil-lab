@@ -1,15 +1,14 @@
 
 #include <iostream>
-#include "global.cpp"
 #include "functions_Laplace.h"
 #include "functions_Poisson.h"
-#include "functions_general.h"
+
 
 #include <omp.h>
 
 #include "/home/igor/Eigen/Eigen/SparseCore"
 #include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
-#include "../../My_linalg/my_linalg.h"
+
 #include <chrono>
 
 
