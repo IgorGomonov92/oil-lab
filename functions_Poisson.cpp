@@ -24,14 +24,14 @@ void Construct_matrix_Poisson(SparseMatrix<double> *a) {
     a->reserve(VectorXi::Constant(nP, 7));
 
 //решаем задачу в одном слое
-    for (int k = 1; k <= 1; k++) {
+    for (int k = 1; k <= 2; k++) {
         for (int j = 1; j <= qy; j++) {
             for (int i = 1; i <= qx; i++) {
                 if (k > 1) a->insert(row, row - qx * qy) = 1;
                 if (j > 1) a->insert(row, row - qx) = 1;
                 if (i > 1) a->insert(row, row - 1) = 1;
                 a->insert(row, row) = -6;
-                if (k < 2 && row >= qx * qy) a->insert(row, row + qx * qy) = 1;
+                if (k < 2) a->insert(row, row + qx * qy) = 1;
                 if (j < qy) a->insert(row, row + qx) = 1;
                 if (i < qx) a->insert(row, row + 1) = 1;
                 row++;
@@ -43,7 +43,7 @@ void Construct_matrix_Poisson(SparseMatrix<double> *a) {
 
 
     a->makeCompressed();
-
+std::cout<<*a;
 }
 
 //--------------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ std::vector<VectorXd> Solve_Poissons() {
 // считаем предобуславливатель
     high_resolution_clock::time_point tP1 = high_resolution_clock::now();
 
-    solverP.preconditioner().setFillfactor(5);
+    solverP.preconditioner().setFillfactor(7);
 
     solverP.preconditioner().compute(AP);
 // раскладываем матрицу
@@ -156,7 +156,7 @@ std::vector<VectorXd> Solve_Poissons() {
     high_resolution_clock::time_point tP2 = high_resolution_clock::now();
 //считаем время решения
     auto durationP = duration_cast<seconds>(tP2 - tP1).count();
-    std::cout << std::endl << durationP << "||" << solverP.iterations()<< std::endl;
+    std::cout << std::endl <<"Poisson  duration = " << durationP << " || "<<"iterations = " << solverP.iterations()<< std::endl;
 
     return uP;
 

@@ -44,7 +44,7 @@ void Construct_matrix_Laplace(SparseMatrix<double> *a)
 
     }
 
-
+std::cout<< *a;
     a->makeCompressed();
 }
 
@@ -118,8 +118,8 @@ VectorXd Solve_Laplace()
     high_resolution_clock::time_point tL2 = high_resolution_clock::now();
 //считаем время решения
     auto durationL = duration_cast<seconds>(tL2 - tL1).count();
-    std::cout << std::endl << durationL << "||" << solverL.iterations()<< std::endl;
-// закончили обсчет ур я Лапаласа
+    std::cout << std::endl <<"Laplace  duration = " << durationL << " || "<<"iterations = " << solverL.iterations()<< std::endl;
+// закончили обсчет ур я Лапласа
 
     return u;
 
