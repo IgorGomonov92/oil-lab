@@ -9,21 +9,19 @@
 #include <chrono>
 
 
-
 using namespace Eigen;
 using namespace std::chrono;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     omp_set_num_threads(omp_get_max_threads());
     Eigen::setNbThreads(omp_get_max_threads());
 
-    VectorXd u;
-    std::vector<VectorXd> u1; // вектора решений
+    VectorXd uL;
+    std::vector<VectorXd> uP; // вектора решений
 
-    u = Solve_Laplace();
-    u1 = Solve_Poissons();
+    uL = Solve_Laplace();
+    uP = Solve_Poissons();
 
-   // std::cout<< u <<std::endl << "----------" <<std::endl << u1;
-        return 0;
+    // std::cout<< u <<std::endl << "----------" <<std::endl << u1;
+    return 0;
 }
