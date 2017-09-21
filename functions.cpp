@@ -83,21 +83,21 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
     a->makeCompressed();
 }
 
-void Construct_f( std::vector<VectorXd> f)
+void Construct_f( std::vector<VectorXd> * f)
 {
 
     for(int i=0;i<nP;i++)
     {
-        f[0].resize(nP);
-        f[0].coeffRef(i) = 1.0/(i+1);
+        f->at(0).resize(nP);
+        f->at(0).coeffRef(i) = 1.0/(i+1);
     }
 
     for(int i=1;i<=qz;i++)
     {
         for(int j=0;j<nP;j++)
         {
-            f[i].resize(nP);
-            f[i].coeffRef(j) = 1.0/(j+1);
+            f->at(i).resize(nP);
+            f->at(i).coeffRef(j) = 1.0/(j+1);
         }
      }
 
@@ -159,9 +159,6 @@ void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc)
 
 void Construct_load_Poisson( VectorXd * bP, VectorXd * bcP, VectorXd  * f)
 {
-
-    f->resize(nP);
-
     bP->fill(0);
     for(int i=0 ; i<qz; i++)
     {
@@ -218,7 +215,7 @@ std::vector<VectorXd> Solve_Poissons()
     VectorXd * bc_prom_P = &bcP; //промежуточный вектор
     VectorXd initGuess(nP); // начальное значение для солвера
 
-    Construct_f( f);
+    Construct_f( &f);
 
     bc_prom_P->resize(nP);
 

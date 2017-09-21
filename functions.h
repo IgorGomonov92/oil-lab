@@ -11,7 +11,7 @@ using namespace Eigen;
 
 void Construct_matrix_Laplace(SparseMatrix<double > * A);
 void Construct_matrix_Poisson(SparseMatrix<double > * A1);
-void Construct_f( std::vector<VectorXd> f);
+void Construct_f( std::vector<VectorXd> * f);
 void Construct_guess_L(VectorXd * initGuess);
 void Construct_guess_P(VectorXd * initGuess);
 void Construct_BC_Laplace(SparseVector<double> * bc);
