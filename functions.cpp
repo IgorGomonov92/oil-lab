@@ -157,15 +157,15 @@ void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc)
 }
 
 
-void Construct_load_Poisson( VectorXd * bP, VectorXd * bcP, std::vector<VectorXd>  * f)
+void Construct_load_Poisson( VectorXd * bP, VectorXd * bcP, VectorXd  * f)
 {
 
-    f->at(0).resize(nP);
+    f->resize(nP);
 
     bP->fill(0);
     for(int i=0 ; i<qz; i++)
     {
-        bP->coeffRef(i) = bcP->coeff(i) + f->at(0).coeff(i)*2.0*h;
+        bP->coeffRef(i) = bcP->coeff(i) + f->coeff(i)*2.0*h;
 
     }
 
@@ -225,7 +225,7 @@ std::vector<VectorXd> Solve_Poissons()
     Construct_guess_P( &initGuess);
     Construct_matrix_Poisson(&AP);
     Construct_BC_Poisson(&bcP);
-    Construct_load_Poisson( &bP, &bcP, &f );
+    Construct_load_Poisson( &bP, &bcP, &f[0] );
 
 
     for (int i = 0; i < qz; ++i)
@@ -256,7 +256,7 @@ std::vector<VectorXd> Solve_Poissons()
 // граничное условие на след шаге по z равно решению на предыдущем шаге
         bc_prom_P = &uP[i];
 
-        Construct_load_Poisson(&bP, bc_prom_P, &f);
+        Construct_load_Poisson(&bP, bc_prom_P, &f[i]);
     }
 
     //--------------

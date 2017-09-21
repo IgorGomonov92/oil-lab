@@ -17,7 +17,7 @@ void Construct_guess_P(VectorXd * initGuess);
 void Construct_BC_Laplace(SparseVector<double> * bc);
 void Construct_BC_Poisson(VectorXd * bc);
 void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc);
-void Construct_load_Poisson(VectorXd * b, VectorXd * bc, std::vector<VectorXd> * f);
+void Construct_load_Poisson(VectorXd * b, VectorXd * bc, VectorXd * f);
 
 VectorXd  Solve_Laplace();
 std::vector<VectorXd>  Solve_Poissons();
