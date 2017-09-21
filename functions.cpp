@@ -85,11 +85,21 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
 
 void Construct_f( std::vector<VectorXd> f)
 {
-    for(int i=0;i<qx*qy;i++)
+
+    for(int i=0;i<nP;i++)
     {
-        f[i].resize(nP);
-        f[i].fill(1.0/(i+1));
+        f[0].resize(nP);
+        f[0].coeffRef(i) = 1.0/(i+1);
     }
+
+    for(int i=1;i<=qz;i++)
+    {
+        for(int j=0;j<nP;j++)
+        {
+            f[i].resize(nP);
+            f[i].coeffRef(j) = 1.0/(j+1);
+        }
+     }
 
 }
 
@@ -203,7 +213,7 @@ VectorXd  Solve_Poissons()
     VectorXd bcP(nP);
     VectorXd uP(nP); //неизв векторы ур ия Пуассона
     VectorXd bP(nP);
-    std::vector<VectorXd> f(nP);
+    std::vector<VectorXd> f(qz+1);
 
     VectorXd initGuess(nP); // начальное значение для солвера
 
