@@ -23,17 +23,16 @@ int main(int argc, char **argv) {
     std::vector<VectorXd> uP(qz+1), uPseparated(qz+1); // Вектор решения одного слоя уравнения пуассона содержит два слоя из=за необх учитывать ГУ Дирихле
 
     uL = Solve_Laplace();
-    uP = Solve_Poissons();
+    uP = Solve_Poissons( &uL );
 
     for (int i = 0; i < qz; ++i)
     {
-        uPseparated[i].resize(nP/2);
+        uPseparated[i].resize(qx*qy);
         uPseparated[i].fill(0);
-        for (int j = 0; j <nP/2 ; ++j)
+        for (int j = 0; j <qx*qy ; ++j)
         {
             uPseparated[i].coeffRef(j) = uP[i].coeff(j);
         }
-        std::cout<< uPseparated[i];
     }
 
     // std::cout<< u <<std::endl << "----------" <<std::endl << u1;

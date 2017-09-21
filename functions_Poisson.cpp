@@ -61,19 +61,27 @@ void Construct_guess_P(VectorXd *initGuess)
 
 //--------------------------------------------------------------------------------------
 
-void Construct_f(std::vector<VectorXd> *f)
+void Construct_f(std::vector<VectorXd> *f, VectorXd * uL)
 {
     f->at(0).resize(nP);
 
     //заполняем вектор правой части ур я пуассона для каждого слоя
-    for (int i = 0; i <= qz; i++)
+    for (int i = 0; i < qz; i++)
     {
         f->at(i).resize(nP);
 
         for (int j = 0; j < nP; j++)
         {
-            f->at(i).coeffRef(j) = 1.0 / (j + 1);
+            if ( i > 0  && i < (qz-1) )
+                 f->at(i).coeffRef(j) = (uL->coeff(j+qx*qy) - uL->coeff(j-qx*qy))/2;
+            else if ( i == 0 )
+                 f->at(i).coeffRef(j) = (uL->coeff(j+qx*qy))/2;
+            else if ( i == (qz-1) )
+                 f->at(i).coeffRef(j) = (uL->coeff(j-qx*qy))/2;
+
         }
+        std::cout << f->at(i);
+
     }
 
 }
@@ -111,7 +119,7 @@ void Construct_load_Poisson(VectorXd *bP, VectorXd *bcP, VectorXd *f)
 
 
 
-std::vector<VectorXd> Solve_Poissons()
+std::vector<VectorXd> Solve_Poissons(VectorXd * uL)
 {
     SpMat AP(nP, nP);
     VectorXd bcP(nP);
@@ -121,7 +129,7 @@ std::vector<VectorXd> Solve_Poissons()
     VectorXd *bc_prom_P = &bcP; //промежуточный вектор
     VectorXd initGuess(nP); // начальное значение для солвера
 
-    Construct_f(&f);
+    Construct_f(&f, uL);
 
     bc_prom_P->resize(nP);
 
@@ -154,7 +162,7 @@ std::vector<VectorXd> Solve_Poissons()
     solverP.solveWithGuess(bP, initGuess);
 //запускаем солвер
     //--------------
-    for (int i = 0; i <= qz; i++)
+    for (int i = 0; i < qz; i++)
     {
         uP[i] = solverP.solve(bP);
 // граничное условие на след шаге по z равно первому слою решения на предыдущем шаге
