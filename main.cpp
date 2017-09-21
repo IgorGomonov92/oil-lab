@@ -2,7 +2,7 @@
 #include <iostream>
 #include "functions_Laplace.h"
 #include "functions_Poisson.h"
-
+#include "global.cpp"
 
 #include <omp.h>
 
@@ -19,11 +19,22 @@ int main(int argc, char **argv) {
     omp_set_num_threads(omp_get_max_threads());
     Eigen::setNbThreads(omp_get_max_threads());
 
-    VectorXd uL;
-    std::vector<VectorXd> uP; // вектора решений
+    VectorXd uL;// вектора решений
+    std::vector<VectorXd> uP(qz+1), uPseparated(qz+1); // Вектор решения одного слоя уравнения пуассона содержит два слоя из=за необх учитывать ГУ Дирихле
 
     uL = Solve_Laplace();
     uP = Solve_Poissons();
+
+    for (int i = 0; i < qz; ++i)
+    {
+        uPseparated[i].resize(nP/2);
+        uPseparated[i].fill(0);
+        for (int j = 0; j <nP/2 ; ++j)
+        {
+            uPseparated[i].coeffRef(j) = uP[i].coeff(j);
+        }
+        std::cout<< uPseparated[i];
+    }
 
     // std::cout<< u <<std::endl << "----------" <<std::endl << u1;
     return 0;

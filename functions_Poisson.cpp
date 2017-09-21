@@ -163,7 +163,6 @@ std::vector<VectorXd> Solve_Poissons()
         for (int j = 0; j < qx*qy; ++j)
         {
             bc_prom_P->coeffRef(j) = uP[i].coeff(j);
-
         }
 // считаем новую правую часть
         Construct_load_Poisson(&bP, bc_prom_P, &f[i]);
