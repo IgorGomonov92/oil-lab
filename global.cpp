@@ -5,7 +5,7 @@
 
 //размеры сетки - глоб константы
 
-const long qx=100, qy=100, qz=100;
+const long qx=10, qy=10, qz=10;
 const long n = qx * qy * qz;
 const long nP = qx * qy * 2;
 const double h=1.0, error=1.e-10; // шаг сетки и требуемая точность

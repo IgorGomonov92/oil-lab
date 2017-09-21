@@ -124,6 +124,7 @@ void Construct_guess_P(VectorXd * initGuess)
 void Construct_BC_Laplace(SparseVector<double> * bc)
 {
 
+
     for(int i=0; i<qx*qy; i++)
     {
         bc->insert(i) = .2;
@@ -137,7 +138,7 @@ void Construct_BC_Laplace(SparseVector<double> * bc)
 void Construct_BC_Poisson(VectorXd * bc)
 {
     bc->fill(0);
-    for(int i=0; i<qz; i++)
+    for(int i=0; i<qx*qy; i++)
     {
         bc->coeffRef(i,0) = .1;
     }
@@ -156,15 +157,15 @@ void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc)
 }
 
 
-void Construct_load_Poisson( VectorXd * b1, VectorXd * bc1, std::vector<VectorXd>  * f)
+void Construct_load_Poisson( VectorXd * bP, VectorXd * bcP, std::vector<VectorXd>  * f)
 {
+
     f->at(0).resize(nP);
-    f->at(0).fill(1);
-    b1->fill(0);
-    f->at(1).fill(0);
+
+    bP->fill(0);
     for(int i=0 ; i<qz; i++)
     {
-        b1->coeffRef(i) = bc1->coeff(i) + f->at(0).coeff(i)*2.0*h;
+        bP->coeffRef(i) = bcP->coeff(i) + f->at(0).coeff(i)*2.0*h;
 
     }
 
@@ -214,7 +215,7 @@ std::vector<VectorXd> Solve_Poissons()
     std::vector<VectorXd> uP(qz+1); //неизв векторы ур ия Пуассона
     VectorXd bP(nP);
     std::vector<VectorXd> f(qz+1);
-    VectorXd * bc_prom_P; //промежуточный вектор
+    VectorXd * bc_prom_P = &bcP; //промежуточный вектор
     VectorXd initGuess(nP); // начальное значение для солвера
 
     Construct_f( f);
