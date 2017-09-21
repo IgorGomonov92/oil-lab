@@ -58,7 +58,7 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
     int row=0;
     a->reserve(VectorXi::Constant(nP,7));
 
-
+//решаем задачу в одном слое
     for(int k=1; k<=1; k++)
     {
         for(int j=1; j<=qy; j++)
@@ -162,9 +162,9 @@ void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc)
 void Construct_load_Poisson( VectorXd * bP, VectorXd * bcP, VectorXd  * f)
 {
     bP->fill(0);
-    for(int i=0 ; i<qz; i++)
+    for(int i=0 ; i<qx*qy; i++)
     {
-        bP->coeffRef(i) = bcP->coeff(i) + f->coeff(i)*2.0*h;
+        bP->coeffRef(i) = bcP->coeff(i) - f->coeff(i)*h*h;
 
     }
 
