@@ -1,6 +1,10 @@
 
 #include <iostream>
-#include "functions.h"
+#include "global.cpp"
+#include "functions_Laplace.h"
+#include "functions_Poisson.h"
+#include "functions_general.h"
+
 #include <omp.h>
 
 #include "/home/igor/Eigen/Eigen/SparseCore"
