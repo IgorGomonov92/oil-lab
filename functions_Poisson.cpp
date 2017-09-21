@@ -18,15 +18,19 @@ using namespace std::chrono;
 using namespace Eigen;
 
 //--------------------------------------------------------------------------------------
-void Construct_matrix_Poisson(SparseMatrix<double> *a) {
+void Construct_matrix_Poisson(SparseMatrix<double> *a)
+{
 
     int row = 0;
     a->reserve(VectorXi::Constant(nP, 7));
 
 //решаем задачу в одном слое
-    for (int k = 1; k <= 2; k++) {
-        for (int j = 1; j <= qy; j++) {
-            for (int i = 1; i <= qx; i++) {
+    for (int k = 1; k <= 2; k++)
+    {
+        for (int j = 1; j <= qy; j++)
+        {
+            for (int i = 1; i <= qx; i++)
+            {
                 if (k > 1) a->insert(row, row - qx * qy) = 1;
                 if (j > 1) a->insert(row, row - qx) = 1;
                 if (i > 1) a->insert(row, row - 1) = 1;
@@ -43,13 +47,13 @@ void Construct_matrix_Poisson(SparseMatrix<double> *a) {
 
 
     a->makeCompressed();
-std::cout<<*a;
 }
 
 //--------------------------------------------------------------------------------------
 
 
-void Construct_guess_P(VectorXd *initGuess) {
+void Construct_guess_P(VectorXd *initGuess)
+{
     initGuess->fill(0);
     for (int i = 0; i < nP; i++)
         initGuess->coeffRef(i) = -1.0 / 6.0;
@@ -57,17 +61,17 @@ void Construct_guess_P(VectorXd *initGuess) {
 
 //--------------------------------------------------------------------------------------
 
-void Construct_f(std::vector<VectorXd> *f) {
+void Construct_f(std::vector<VectorXd> *f)
+{
     f->at(0).resize(nP);
 
-    for (int i = 0; i < nP; i++) {
-        f->at(0).coeffRef(i) = 1.0 / (i + 1);
-    }
-
-    for (int i = 1; i <= qz; i++) {
+    //заполняем вектор правой части ур я пуассона для каждого слоя
+    for (int i = 0; i <= qz; i++)
+    {
         f->at(i).resize(nP);
 
-        for (int j = 0; j < nP; j++) {
+        for (int j = 0; j < nP; j++)
+        {
             f->at(i).coeffRef(j) = 1.0 / (j + 1);
         }
     }
@@ -78,9 +82,11 @@ void Construct_f(std::vector<VectorXd> *f) {
 
 
 // задаем граничные условия
-void Construct_BC_Poisson(VectorXd *bc) {
+void Construct_BC_Poisson(VectorXd *bc)
+{
     bc->fill(0);
-    for (int i = 0; i < qx * qy; i++) {
+    for (int i = 0; i < qx * qy; i++)
+    {
         bc->coeffRef(i, 0) = .1;
     }
 
@@ -89,9 +95,11 @@ void Construct_BC_Poisson(VectorXd *bc) {
 //--------------------------------------------------------------------------------------
 
 
-void Construct_load_Poisson(VectorXd *bP, VectorXd *bcP, VectorXd *f) {
+void Construct_load_Poisson(VectorXd *bP, VectorXd *bcP, VectorXd *f)
+{
     bP->fill(0);
-    for (int i = 0; i < qx * qy; i++) {
+    for (int i = 0; i < qx * qy; i++)
+    {
         bP->coeffRef(i) = bcP->coeff(i) - f->coeff(i) * h * h;
 
     }
@@ -103,7 +111,8 @@ void Construct_load_Poisson(VectorXd *bP, VectorXd *bcP, VectorXd *f) {
 
 
 
-std::vector<VectorXd> Solve_Poissons() {
+std::vector<VectorXd> Solve_Poissons()
+{
     SpMat AP(nP, nP);
     VectorXd bcP(nP);
     std::vector<VectorXd> uP(qz + 1); //неизв векторы ур ия Пуассона
@@ -122,7 +131,8 @@ std::vector<VectorXd> Solve_Poissons() {
     Construct_load_Poisson(&bP, &bcP, &f[0]);
 
 
-    for (int i = 0; i < qz; ++i) {
+    for (int i = 0; i < qz; ++i)
+    {
         uP[i].resize(nP);
         uP[i].fill(0);
     }
@@ -144,10 +154,17 @@ std::vector<VectorXd> Solve_Poissons() {
     solverP.solveWithGuess(bP, initGuess);
 //запускаем солвер
     //--------------
-    for (int i = 1; i <= qz; i++) {
+    for (int i = 0; i <= qz; i++)
+    {
         uP[i] = solverP.solve(bP);
-// граничное условие на след шаге по z равно решению на предыдущем шаге
-        bc_prom_P = &uP[i];
+// граничное условие на след шаге по z равно первому слою решения на предыдущем шаге
+        bc_prom_P->fill(0);
+
+        for (int j = 0; j < qx*qy; ++j)
+        {
+            bc_prom_P->coeffRef(j) = uP[i].coeff(j);
+
+        }
 // считаем новую правую часть
         Construct_load_Poisson(&bP, bc_prom_P, &f[i]);
     }

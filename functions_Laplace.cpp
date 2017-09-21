@@ -25,9 +25,12 @@ void Construct_matrix_Laplace(SparseMatrix<double> *a)
     a->reserve(VectorXi::Constant(n, 7));
 
 
-    for (int k = 1; k <= qz; k++) {
-        for (int j = 1; j <= qy; j++) {
-            for (int i = 1; i <= qx; i++) {
+    for (int k = 1; k <= qz; k++)
+    {
+        for (int j = 1; j <= qy; j++)
+        {
+            for (int i = 1; i <= qx; i++)
+            {
                 if (k > 1) a->insert(row, row - qx * qy) = 1;
                 if (j > 1) a->insert(row, row - qx) = 1;
                 if (i > 1) a->insert(row, row - 1) = 1;
@@ -44,7 +47,6 @@ void Construct_matrix_Laplace(SparseMatrix<double> *a)
 
     }
 
-std::cout<< *a;
     a->makeCompressed();
 }
 
@@ -66,7 +68,8 @@ void Construct_guess_L(VectorXd *initGuess)
 */
 void Construct_BC_Laplace(SparseVector<double> *bc)
 {
-    for (int i = 0; i < qx * qy; i++) {
+    for (int i = 0; i < qx * qy; i++)
+    {
         bc->insert(i) = .2;
     }
 
@@ -78,7 +81,8 @@ void Construct_BC_Laplace(SparseVector<double> *bc)
 void Construct_load_Laplace(VectorXd *b, SparseVector<double> *bc)
 {
     b->fill(0);
-    for (int i = 0; i < qx * qy; i++) {
+    for (int i = 0; i < qx * qy; i++)
+    {
         b->coeffRef(i) = h * h * bc->coeff(i);
     }
 
