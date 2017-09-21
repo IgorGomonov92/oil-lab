@@ -59,7 +59,7 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
     a->reserve(VectorXi::Constant(nP,7));
 
 
-    for(int k=1; k<=2; k++)
+    for(int k=1; k<=1; k++)
     {
         for(int j=1; j<=qy; j++)
         {
@@ -81,22 +81,24 @@ void Construct_matrix_Poisson(SparseMatrix<double > * a )
 
 
     a->makeCompressed();
+
 }
 
 void Construct_f( std::vector<VectorXd> * f)
 {
+    f->at(0).resize(nP);
 
     for(int i=0;i<nP;i++)
     {
-        f->at(0).resize(nP);
         f->at(0).coeffRef(i) = 1.0/(i+1);
     }
 
     for(int i=1;i<=qz;i++)
     {
+        f->at(i).resize(nP);
+
         for(int j=0;j<nP;j++)
         {
-            f->at(i).resize(nP);
             f->at(i).coeffRef(j) = 1.0/(j+1);
         }
      }
@@ -185,13 +187,14 @@ VectorXd  Solve_Laplace()
     u.fill(0);
     // Решаем уравнение Лапласа
     BiCGSTAB< SparseMatrix<double,RowMajor>> solverL;
+    high_resolution_clock::time_point tL1 = high_resolution_clock::now();
+
 // устанавливаем требуемую точность
     solverL.setTolerance(error);
     solverL.compute(AL);
 // устанавливаем начальное приближение
     solverL.solveWithGuess(b, initGuess);
 //запускаем солвер
-    high_resolution_clock::time_point tL1 = high_resolution_clock::now();
  //--------------
     u = solverL.solve(b);
  //--------------
@@ -199,7 +202,7 @@ VectorXd  Solve_Laplace()
 //считаем время решения
     auto durationL = duration_cast<seconds>( tL2 - tL1 ).count();
     std::cout << std::endl << durationL << std::endl;
-// заккончили обсчет ур я Лапаласа
+// закончили обсчет ур я Лапаласа
 
     return u;
 
@@ -237,7 +240,9 @@ std::vector<VectorXd> Solve_Poissons()
 // устанавливаем треб точность
     solverP.setTolerance(error);
 // считаем предобуславливатель
-    solverP.preconditioner().setFillfactor(7);
+    high_resolution_clock::time_point tP1 = high_resolution_clock::now();
+
+    solverP.preconditioner().setFillfactor(5);
 
     solverP.preconditioner().compute(AP);
 // раскладываем матрицу
@@ -245,14 +250,13 @@ std::vector<VectorXd> Solve_Poissons()
 // устанавливаем начальное приближение
     solverP.solveWithGuess(bP, initGuess);
 //запускаем солвер
-    high_resolution_clock::time_point tP1 = high_resolution_clock::now();
     //--------------
     for(int i=1; i<=qz; i++)
     {
         uP[i] = solverP.solve(bP);
 // граничное условие на след шаге по z равно решению на предыдущем шаге
         bc_prom_P = &uP[i];
-
+// считаем новую правую часть
         Construct_load_Poisson(&bP, bc_prom_P, &f[i]);
     }
 
