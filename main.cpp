@@ -18,7 +18,8 @@ int main(int argc, char **argv)
     omp_set_num_threads(omp_get_max_threads());
     Eigen::setNbThreads(omp_get_max_threads());
 
-    VectorXd u, u1; // вектора решений
+    VectorXd u;
+    std::vector<VectorXd> u1; // вектора решений
 
     u = Solve_Laplace();
     u1 = Solve_Poissons();

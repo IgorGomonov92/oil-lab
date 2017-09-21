@@ -20,7 +20,7 @@ void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc);
 void Construct_load_Poisson(VectorXd * b, VectorXd * bc, std::vector<VectorXd> * f);
 
 VectorXd  Solve_Laplace();
-VectorXd  Solve_Poissons();
+std::vector<VectorXd>  Solve_Poissons();
 //VectorXd * Solve_Poissons(SparseMatrix<double > * AL, VectorXd * b, VectorXd * initGuess);
 
 

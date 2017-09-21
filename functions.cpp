@@ -207,24 +207,31 @@ VectorXd  Solve_Laplace()
 
 }
 
-VectorXd  Solve_Poissons()
+std::vector<VectorXd> Solve_Poissons()
 {
     SpMat  AP(nP, nP);
     VectorXd bcP(nP);
-    VectorXd uP(nP); //неизв векторы ур ия Пуассона
+    std::vector<VectorXd> uP(qz+1); //неизв векторы ур ия Пуассона
     VectorXd bP(nP);
     std::vector<VectorXd> f(qz+1);
-
+    VectorXd * bc_prom_P; //промежуточный вектор
     VectorXd initGuess(nP); // начальное значение для солвера
 
     Construct_f( f);
+
+    bc_prom_P->resize(nP);
 
     Construct_guess_P( &initGuess);
     Construct_matrix_Poisson(&AP);
     Construct_BC_Poisson(&bcP);
     Construct_load_Poisson( &bP, &bcP, &f );
 
-    uP.fill(0);
+
+    for (int i = 0; i < qz; ++i)
+    {
+        uP[i].resize(nP);
+        uP[i].fill(0);
+    }
 
 //--------решаем уравнение Пуассона в каждом слое, где упругие параметры = const
 
@@ -244,9 +251,11 @@ VectorXd  Solve_Poissons()
     //--------------
     for(int i=1; i<=qz; i++)
     {
-        uP = solverP.solve(bP);
-        bcP = uP;
-        Construct_load_Poisson(&bP, &bcP, &f);
+        uP[i] = solverP.solve(bP);
+// граничное условие на след шаге по z равно решению на предыдущем шаге
+        bc_prom_P = &uP[i];
+
+        Construct_load_Poisson(&bP, bc_prom_P, &f);
     }
 
     //--------------
