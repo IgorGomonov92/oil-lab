@@ -2,14 +2,9 @@
 // Created by gomonov on 11.09.17.
 //
 #include "functions_Laplace.h"
-#include <omp.h>
-
-#include "/home/igor/Eigen/Eigen/SparseCore"
-#include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
-
-#include "/home/igor/Eigen/Eigen/SparseCore"
-#include <chrono>
 #include "global.cpp"
+
+
 
 using namespace std::chrono;
 using namespace Eigen;
@@ -20,7 +15,6 @@ using namespace Eigen;
 // собираем матрицу СЛАУ для ур ия лапласа
 void Construct_matrix_Laplace(SparseMatrix<double> *a)
 {
-
     int row = 0;
     a->reserve(VectorXi::Constant(n, 7));
 

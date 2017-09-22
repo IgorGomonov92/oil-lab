@@ -1,17 +1,8 @@
 //
 // Created by igor on 21.09.17.
 //
-
-#include "functions_Laplace.h"
-#include <omp.h>
-
-#include "/home/igor/Eigen/Eigen/SparseCore"
-#include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
-
-
-#include "/home/igor/Eigen/Eigen/SparseCore"
-#include <chrono>
 #include "global.cpp"
+#include "functions_Poisson.h"
 
 
 using namespace std::chrono;
@@ -77,10 +68,9 @@ void Construct_f(std::vector<VectorXd> *f, VectorXd * uL)
             else if ( i == 0 )
                  f->at(i).coeffRef(j) = (uL->coeff(j+qx*qy))/2;
             else if ( i == (qz-1) )
-                 f->at(i).coeffRef(j) = (uL->coeff(j-qx*qy))/2;
+                 f->at(i).coeffRef(j) = ((-1)*uL->coeff(j-qx*qy))/2;
 
         }
-        std::cout << f->at(i);
 
     }
 

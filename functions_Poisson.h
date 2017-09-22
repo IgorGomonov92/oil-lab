@@ -4,8 +4,11 @@
 
 #ifndef FDM_FUNCTIONS_POISSON_H
 #define FDM_FUNCTIONS_POISSON_H
-#include "/home/igor/Eigen/Eigen/SparseCore"
 #include <iostream>
+#include <omp.h>
+#include "/home/igor/Eigen/Eigen/SparseCore"
+#include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
+#include <chrono>
 
 using namespace Eigen;
 

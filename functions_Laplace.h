@@ -2,10 +2,14 @@
 // Created by gomonov on 11.09.17.
 //
 
-#ifndef FDM_FUNCTIONS_H
-#define FDM_FUNCTIONS_H
+#ifndef FDM_FUNCTIONS_LAPLACE_H
+#define FDM_FUNCTIONS_LAPLACE_H
 #include "/home/igor/Eigen/Eigen/SparseCore"
 #include <iostream>
+#include <omp.h>
+#include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
+#include <chrono>
+
 
 using namespace Eigen;
 

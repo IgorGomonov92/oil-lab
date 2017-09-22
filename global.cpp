@@ -1,8 +1,10 @@
 //
 // Created by igor on 14.09.17.
 //
-#include "/home/igor/Eigen/Eigen/SparseCore"
+#ifndef FDM_GLOBAL_CPP
+#define FDM_GLOBAL_CPP
 
+#include "/home/igor/Eigen/Eigen/SparseCore"
 //размеры сетки - глоб константы
 
 const long qx=4, qy=4, qz=4;
@@ -12,3 +14,5 @@ const double h=1.0/qx, error=1.e-10; // шаг сетки и требуемая 
 
 typedef Eigen::SparseMatrix<double > SpMat;
 typedef Eigen::Triplet<double> T;
+
+#endif
