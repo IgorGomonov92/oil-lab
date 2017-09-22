@@ -13,11 +13,11 @@
 
 using namespace Eigen;
 
-void Construct_w( VectorXd * w );
+void Construct_w0( VectorXd * w0 );
 void Construct_matrix_Laplace(SparseMatrix<double > * A);
 void Construct_guess_L(VectorXd * initGuess);
-void Construct_BC_Laplace(SparseVector<double> * bc, VectorXd * w);
-void Construct_load_Laplace(VectorXd * b, SparseVector<double> * bc);
+void Construct_BC_Laplace(VectorXd * bc, VectorXd * w0);
+void Construct_load_Laplace(VectorXd * b, VectorXd * bc);
 VectorXd  Solve_Laplace();
 
 #endif //FDM_FUNCTIONS_H

@@ -11,11 +11,11 @@ using namespace Eigen;
 
 //--------------------------------------------------------------------------------------
 
-void Construct_w( VectorXd * w )
+void Construct_w0( VectorXd * w0 )
 {
     for (int i = 0; i < qx*qy; ++i)
     {
-        w->coeffRef(i) = 12;
+        w0->coeffRef(i) = 12;
     }
 }
 
@@ -70,33 +70,36 @@ void Construct_guess_L(VectorXd *initGuess)
 /*
 // задаем граничный условия
 */
-void Construct_BC_Laplace(SparseVector<double> *bc, VectorXd * w)
+void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
 {
-    std::vector<double> E(qz), v(qz), lamda(qz), G(qz); // упругие параметры
+    std::vector<double> E(qz,0), v(qz,0), lamda(qz,0), G(qz,0); // упругие параметры
     // заполняем вектотора упругих параметров в разных слоях соотв функциями
     Construct_E(&E);
     Construct_v(&v);
     Construct_lamda(&lamda, &E, &v);
     Construct_G(&G, &E, &v);
 
+    bc->fill(0);
+
     //задаем граничные условия Неймана
-    bc->insert(0) = 2*G[0] / (lamda[0]+2*G[0]) * ( 4*w->coeff(0) + w->coeff(1) + w->coeff(qx) ) / h / h;
-    bc->insert(qx * qy) = 2*G[qx*qy] / (lamda[qx*qy]+2*G[qx*qy]) * (w->coeff(qx*qy-1) - 4*w->coeff(qx*qy) + w->coeff(qx*qy-qx)  ) / h / h;
+    bc->coeffRef(0) = 2*G[0] / (lamda[0]+2*G[0]) * ( 4*w0->coeff(0) + w0->coeff(1) + w0->coeff(qx) ) / h / h;
+    bc->coeffRef(qx * qy) = 2*G[0] / (lamda[0]+2*G[0]) * (w0->coeff(qx*qy-1) - 4*w0->coeff(qx*qy) + w0->coeff(qx*qy-qx)  ) / h / h;
 
 
     for (int i = 1; i < qx * qy - 1; i++)
     {
-        bc->insert(i) = 2*G[i] / (lamda[i]+2*G[i]) * ( w->coeff(i-1) - 4*w->coeff(i) + w->coeff(i+1) + w->coeff(i-qx) + w->coeff(i+qx) ) / h / h;
+        bc->coeffRef(i) = 2*G[0] / (lamda[0]+2*G[0]) * ( w0->coeff(i-1) - 4*w0->coeff(i) + w0->coeff(i+1) + w0->coeff(i-qx) + w0->coeff(i+qx) ) / h / h;
 
 
     }
+
 
 }
 
 //--------------------------------------------------------------------------------------
 
 
-void Construct_load_Laplace(VectorXd *b, SparseVector<double> *bc)
+void Construct_load_Laplace(VectorXd *b, VectorXd *bc)
 {
     b->fill(0);
     for (int i = 0; i < qx * qy; i++)
@@ -113,16 +116,16 @@ void Construct_load_Laplace(VectorXd *b, SparseVector<double> *bc)
 VectorXd Solve_Laplace()
 {
     SpMat AL(n, n);
-    SparseVector<double> bc(n);
+    VectorXd bc(n);
     VectorXd u(n); //неизв векторы ур ия Лапласа
     VectorXd b(n);
     VectorXd initGuess(n); // начальное значение для солвера
-    VectorXd w(qx*qy); // начальное поле перемещения по Oz
+    VectorXd w0(qx*qy); // начальное поле перемещения по Oz
 
-    Construct_w(&w);
+    Construct_w0(&w0);
     Construct_guess_L(&initGuess);
     Construct_matrix_Laplace(&AL);
-    Construct_BC_Laplace(&bc, &w);
+    Construct_BC_Laplace(&bc, &w0);
     Construct_load_Laplace(&b, &bc);
 
     u.fill(0);

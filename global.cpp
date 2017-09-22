@@ -7,7 +7,7 @@
 #include "/home/igor/Eigen/Eigen/SparseCore"
 //размеры сетки - глоб константы
 
-const long qx=40, qy=40, qz=10;
+const long qx=4, qy=4, qz=4;
 const long n = qx * qy * qz;
 const long nP = qx * qy * 2;
 const double h=1.0/qx, error=1.e-10; // шаг сетки и требуемая точность
