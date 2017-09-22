@@ -9,6 +9,7 @@
 #include "/home/igor/Eigen/Eigen/SparseCore"
 #include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
 #include <chrono>
+#include "functions_general.h"
 
 using namespace Eigen;
 

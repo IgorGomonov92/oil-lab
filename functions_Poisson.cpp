@@ -54,6 +54,13 @@ void Construct_guess_P(VectorXd *initGuess)
 
 void Construct_f(std::vector<VectorXd> *f, VectorXd * uL)
 {
+    std::vector<double> E(qz), v(qz), lamda(qz), G(qz); // упругие параметры
+    // заполняем вектотора упругих параметров в разных слоях соотв функциями
+    Construct_E(&E);
+    Construct_v(&v);
+    Construct_lamda(&lamda, &E, &v);
+    Construct_G(&G, &E, &v);
+
     f->at(0).resize(nP);
 
     //заполняем вектор правой части ур я пуассона для каждого слоя
@@ -64,11 +71,11 @@ void Construct_f(std::vector<VectorXd> *f, VectorXd * uL)
         for (int j = 0; j < nP; j++)
         {
             if ( i > 0  && i < (qz-1) )
-                 f->at(i).coeffRef(j) = (uL->coeff(j+qx*qy) - uL->coeff(j-qx*qy))/2;
+                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(j+qx*qy) - uL->coeff(j-qx*qy))/2;
             else if ( i == 0 )
-                 f->at(i).coeffRef(j) = (uL->coeff(j+qx*qy))/2;
+                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(j+qx*qy))/2;
             else if ( i == (qz-1) )
-                 f->at(i).coeffRef(j) = ((-1)*uL->coeff(j-qx*qy))/2;
+                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(-uL->coeff(j-qx*qy))/2;
 
         }
 
@@ -99,14 +106,10 @@ void Construct_load_Poisson(VectorXd *bP, VectorXd *bcP, VectorXd *f)
     for (int i = 0; i < qx * qy; i++)
     {
         bP->coeffRef(i) = bcP->coeff(i) - f->coeff(i) * h * h;
-
     }
-
-
 }
 
 //--------------------------------------------------------------------------------------
-
 
 
 std::vector<VectorXd> Solve_Poissons(VectorXd * uL)

@@ -11,6 +11,16 @@ using namespace Eigen;
 
 //--------------------------------------------------------------------------------------
 
+void Construct_w( VectorXd * w )
+{
+    for (int i = 0; i < qx*qy; ++i)
+    {
+        w->coeffRef(i) = 12;
+    }
+}
+
+//--------------------------------------------------------------------------------------
+
 
 // собираем матрицу СЛАУ для ур ия лапласа
 void Construct_matrix_Laplace(SparseMatrix<double> *a)
@@ -60,11 +70,25 @@ void Construct_guess_L(VectorXd *initGuess)
 /*
 // задаем граничный условия
 */
-void Construct_BC_Laplace(SparseVector<double> *bc)
+void Construct_BC_Laplace(SparseVector<double> *bc, VectorXd * w)
 {
-    for (int i = 0; i < qx * qy; i++)
+    std::vector<double> E(qz), v(qz), lamda(qz), G(qz); // упругие параметры
+    // заполняем вектотора упругих параметров в разных слоях соотв функциями
+    Construct_E(&E);
+    Construct_v(&v);
+    Construct_lamda(&lamda, &E, &v);
+    Construct_G(&G, &E, &v);
+
+    //задаем граничные условия Неймана
+    bc->insert(0) = 2*G[0] / (lamda[0]+2*G[0]) * ( 4*w->coeff(0) + w->coeff(1) + w->coeff(qx) ) / h / h;
+    bc->insert(qx * qy) = 2*G[qx*qy] / (lamda[qx*qy]+2*G[qx*qy]) * (w->coeff(qx*qy-1) - 4*w->coeff(qx*qy) + w->coeff(qx*qy-qx)  ) / h / h;
+
+
+    for (int i = 1; i < qx * qy - 1; i++)
     {
-        bc->insert(i) = .2;
+        bc->insert(i) = 2*G[i] / (lamda[i]+2*G[i]) * ( w->coeff(i-1) - 4*w->coeff(i) + w->coeff(i+1) + w->coeff(i-qx) + w->coeff(i+qx) ) / h / h;
+
+
     }
 
 }
@@ -77,7 +101,7 @@ void Construct_load_Laplace(VectorXd *b, SparseVector<double> *bc)
     b->fill(0);
     for (int i = 0; i < qx * qy; i++)
     {
-        b->coeffRef(i) = h * h * bc->coeff(i);
+        b->coeffRef(i) = 2 * h * bc->coeff(i);
     }
 
 
@@ -93,9 +117,12 @@ VectorXd Solve_Laplace()
     VectorXd u(n); //неизв векторы ур ия Лапласа
     VectorXd b(n);
     VectorXd initGuess(n); // начальное значение для солвера
+    VectorXd w(qx*qy); // начальное поле перемещения по Oz
+
+    Construct_w(&w);
     Construct_guess_L(&initGuess);
     Construct_matrix_Laplace(&AL);
-    Construct_BC_Laplace(&bc);
+    Construct_BC_Laplace(&bc, &w);
     Construct_load_Laplace(&b, &bc);
 
     u.fill(0);
