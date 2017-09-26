@@ -92,7 +92,7 @@ void Construct_BC_Poisson(VectorXd *bc)
     for (int i = 0; i < qx * qy; i++)
     {
         if (i>qx*qy/3 && i<qx*qy*2/3)
-        bc->coeffRef(i) = 4.1;
+        bc->coeffRef(i) = -12.1;
     }
 
 }
@@ -105,7 +105,7 @@ void Construct_load_Poisson(VectorXd *bP, VectorXd *bcP, VectorXd *f)
     bP->fill(0);
     for (int i = 0; i < qx * qy; i++)
     {
-        bP->coeffRef(i) = bcP->coeff(i) - f->coeff(i) * h * h;
+        bP->coeffRef(i) = - bcP->coeff(i) + f->coeff(i) * h * h;
     }
 }
 
