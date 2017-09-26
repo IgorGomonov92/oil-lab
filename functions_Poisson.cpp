@@ -68,19 +68,18 @@ void Construct_f(std::vector<VectorXd> *f, VectorXd * uL)
     {
         f->at(i).resize(nP);
 
-        for (int j = 0; j < nP; j++)
+        for (int j = 0; j < qx*qy; j++)
         {
+           // std::cout<<f->at(i).coeffRef(j)<< std::endl;
             if ( i > 0  && i < (qz-1) )
-                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(j+qx*qy) - uL->coeff(j-qx*qy))/2;
+                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(i*qx*qy+j+qx*qy) - uL->coeff(i*qx*qy+j-qx*qy))/2;
             else if ( i == 0 )
-                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(j+qx*qy))/2;
+                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(i*qx*qy+j+qx*qy))/2;
             else if ( i == (qz-1) )
-                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(-uL->coeff(j-qx*qy))/2;
+                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(-uL->coeff(i*qx*qy+j-qx*qy))/2;
 
         }
-
     }
-
 }
 
 //--------------------------------------------------------------------------------------

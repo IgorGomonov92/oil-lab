@@ -81,9 +81,11 @@ void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
 
     bc->fill(0);
 
+    for (int i = 0; i < qz; ++i)
+    //std::cout<<"E "<<E[i]<<";v "<<v[i]<<";lamda "<<lamda[i]<<";G "<<G[i]<< std::endl;
     //задаем граничные условия Неймана
-    bc->coeffRef(0) = 2*G[0] / (lamda[0]+2*G[0]) * ( 4*w0->coeff(0) + w0->coeff(1) + w0->coeff(qx) ) / h / h;
-    bc->coeffRef(qx * qy) = 2*G[0] / (lamda[0]+2*G[0]) * (w0->coeff(qx*qy-1) - 4*w0->coeff(qx*qy) + w0->coeff(qx*qy-qx)  ) / h / h;
+    bc->coeffRef(0) = 2*G[0] / (lamda[0]+2*G[0]) * ( 4*w0->coeff(0) + w0->coeff(1) + w0->coeff(qx-1) ) / h / h;
+    bc->coeffRef(qx * qy - 1) = 2*G[0] / (lamda[0]+2*G[0]) * (w0->coeff(qx*qy-2) - 4*w0->coeff(qx*qy-1) + w0->coeff(qx*qy-qx-1)  ) / h / h;
 
 
     for (int i = 1; i < qx * qy - 1; i++)
@@ -126,6 +128,8 @@ VectorXd Solve_Laplace()
     Construct_matrix_Laplace(&AL);
     Construct_BC_Laplace(&bc, &w0);
     Construct_load_Laplace(&b, &bc);
+
+
 
     u.fill(0);
     // Решаем уравнение Лапласа

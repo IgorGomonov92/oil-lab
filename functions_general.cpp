@@ -25,7 +25,7 @@ void Construct_v(std::vector<double> * v )
 {
     for (int i = 0; i < qz; ++i)
     {
-        v->at(i) = 1.0;
+        v->at(i) = 2.0;
     }
 
 }
