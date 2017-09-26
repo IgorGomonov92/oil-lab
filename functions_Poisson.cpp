@@ -92,7 +92,8 @@ void Construct_BC_Poisson(VectorXd *bc)
     bc->fill(0);
     for (int i = 0; i < qx * qy; i++)
     {
-        bc->coeffRef(i, 0) = .1;
+        if (i>qx*qy/3 && i<qx*qy*2/3)
+        bc->coeffRef(i) = 4.1;
     }
 
 }

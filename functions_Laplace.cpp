@@ -90,7 +90,6 @@ void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
     {
         bc->coeffRef(i) = 2*G[0] / (lamda[0]+2*G[0]) * ( w0->coeff(i-1) - 4*w0->coeff(i) + w0->coeff(i+1) + w0->coeff(i-qx) + w0->coeff(i+qx) ) / h / h;
 
-
     }
 
 

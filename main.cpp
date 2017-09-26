@@ -8,7 +8,8 @@
 #include "/home/igor/Eigen/Eigen/SparseCore"
 #include </home/igor/Eigen/Eigen/IterativeLinearSolvers>
 #include <chrono>
-
+#include <fstream>
+#include <iomanip>
 
 using namespace Eigen;
 using namespace std::chrono;
@@ -16,6 +17,7 @@ using namespace std::chrono;
 int main(int argc, char **argv) {
     omp_set_num_threads(omp_get_max_threads());
     Eigen::setNbThreads(omp_get_max_threads());
+    std::ofstream outputW ("W.txt");
 
 
     VectorXd uL;// вектора решений
@@ -34,6 +36,20 @@ int main(int argc, char **argv) {
         }
     }
 
-    // std::cout<< u <<std::endl << "----------" <<std::endl << u1;
+     //std::cout<< uL <<std::endl << "----------";
+
+
+
+    std::cout.precision(2);
+    for (int k = 0; k < qz; ++k)
+
+        for (int l = 0; l < qy; ++l)
+
+            for (int m = 0; m < qx; ++m)
+            {
+                outputW<< std::scientific << std::setprecision(5) <<uPseparated[k].coeff(l*qy+m)<< std::setw(10) <<" "<< m+1 << " " << l+1 << " " << k+1 << std::endl;
+
+            }
     return 0;
+
 }

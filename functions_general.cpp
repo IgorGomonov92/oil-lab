@@ -15,7 +15,7 @@ void Construct_E( std::vector<double> * E)
 {
     for (int i = 0; i < qz; ++i)
     {
-        E->at(i) = i+1;
+        E->at(i) = 1.0;
     }
 }
 
@@ -25,7 +25,7 @@ void Construct_v(std::vector<double> * v )
 {
     for (int i = 0; i < qz; ++i)
     {
-        v->at(i) = i;
+        v->at(i) = 1.0;
     }
 
 }
