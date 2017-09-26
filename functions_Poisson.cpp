@@ -38,6 +38,7 @@ void Construct_matrix_Poisson(SparseMatrix<double> *a)
 
 
     a->makeCompressed();
+
 }
 
 //--------------------------------------------------------------------------------------
@@ -72,11 +73,13 @@ void Construct_f(std::vector<VectorXd> *f, VectorXd * uL)
         {
            // std::cout<<f->at(i).coeffRef(j)<< std::endl;
             if ( i > 0  && i < (qz-1) )
-                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(i*qx*qy+j+qx*qy) - uL->coeff(i*qx*qy+j-qx*qy))/2;
-            else if ( i == 0 )
-                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(i*qx*qy+j+qx*qy))/2;
-            else if ( i == (qz-1) )
-                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(-uL->coeff(i*qx*qy+j-qx*qy))/2;
+                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(i*qx*qy+j+qx*qy) - uL->coeff(i*qx*qy+j-qx*qy))/2/h;
+
+                    else if ( i == 0 )
+                        f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(i*qx*qy+j+qx*qy))/2/h;
+
+                            else if ( i == (qz-1) )
+                                f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(-uL->coeff(i*qx*qy+j-qx*qy))/2/h;
 
         }
     }
@@ -180,3 +183,25 @@ std::vector<VectorXd> Solve_Poissons(VectorXd * uL)
 }
 
 //--------------------------------------------------------------------------------------
+
+void Construct_w_Derivative_z( std::vector<VectorXd> * w)
+{
+    for (int i = 1; i < qz-1; ++i)
+    {
+
+
+        for (int j = 0; j <qx*qy ; ++j)
+        {
+            if ( i > 0  && i < (qz-1) )
+                w->at(i).coeffRef(j) = (w->at(i).coeff(i*qx*qy+j+qx*qy) - w->at(i).coeff(i*qx*qy+j-qx*qy))/2/h;
+
+                     else if ( i == 0 )
+                        w->at(0).coeffRef(j) = (w->at(0).coeff(j+qx*qy))/2/h;
+
+                            else if ( i == qz-1 )
+                                w->at(qz-1).coeffRef(j) = (w->at(0).coeff((qz-1)*qx*qy+j-qx*qy))/2/h;
+
+        }
+    }
+
+}

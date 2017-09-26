@@ -82,7 +82,7 @@ void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
 
     bc->fill(0);
 
-    for (int i = 0; i < qz; ++i)
+   // for (int i = 0; i < qz; ++i)
     //std::cout<<"E "<<E[i]<<";v "<<v[i]<<";lamda "<<lamda[i]<<";G "<<G[i]<< std::endl;
     //задаем граничные условия Неймана
     bc->coeffRef(0) = 2*G[0] / (lamda[0]+2*G[0]) * ( 4*w0->coeff(0) + w0->coeff(1) + w0->coeff(qx-1) ) / h / h;
