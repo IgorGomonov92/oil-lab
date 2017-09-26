@@ -95,7 +95,7 @@ void Construct_BC_Poisson(VectorXd *bc)
     for (int i = 0; i < qx * qy; i++)
     {
         if (i>qx*qy/3 && i<qx*qy*2/3)
-        bc->coeffRef(i) = -12.1;
+        bc->coeffRef(i) = 1.1;
     }
 
 }
@@ -184,22 +184,23 @@ std::vector<VectorXd> Solve_Poissons(VectorXd * uL)
 
 //--------------------------------------------------------------------------------------
 
-void Construct_w_Derivative_z( std::vector<VectorXd> * w)
+void Construct_w_Derivative_z(  std::vector<VectorXd> * w_Derivative_z, std::vector<VectorXd> * w )
 {
-    for (int i = 1; i < qz-1; ++i)
+    for (int i = 0; i < qz; ++i)
     {
-
+        w_Derivative_z->at(i).resize(qx*qy);
+        w_Derivative_z->at(i).fill(.0);
 
         for (int j = 0; j <qx*qy ; ++j)
         {
             if ( i > 0  && i < (qz-1) )
-                w->at(i).coeffRef(j) = (w->at(i).coeff(i*qx*qy+j+qx*qy) - w->at(i).coeff(i*qx*qy+j-qx*qy))/2/h;
+                w_Derivative_z->at(i).coeffRef(j) = (w->at(i+1).coeff(j) - w->at(i-1).coeff(j))/2/h;
 
                      else if ( i == 0 )
-                        w->at(0).coeffRef(j) = (w->at(0).coeff(j+qx*qy))/2/h;
+                          w_Derivative_z->at(0).coeffRef(j) = (w->at(1).coeff(j))/2/h;
 
                             else if ( i == qz-1 )
-                                w->at(qz-1).coeffRef(j) = (w->at(0).coeff((qz-1)*qx*qy+j-qx*qy))/2/h;
+                                w_Derivative_z->at(qz-1).coeffRef(j) = (w->at(qz-1).coeff(j))/2/h;
 
         }
     }

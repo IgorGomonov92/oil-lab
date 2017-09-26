@@ -15,7 +15,7 @@ void Construct_w0( VectorXd * w0 ) {
     w0->fill(0);
     for (int i = 0; i < qx * qy; i++) {
         if (i > qx * qy / 3 && i < qx * qy * 2 / 3)
-            w0->coeffRef(i) = -12.1;
+            w0->coeffRef(i) = 1.1;
 
     }
 }

@@ -19,6 +19,6 @@ void Construct_f( std::vector<VectorXd> * f, VectorXd * uL);
 void Construct_BC_Poisson(VectorXd * bc);
 void Construct_load_Poisson(VectorXd * b, VectorXd * bc, VectorXd * f);
 std::vector<VectorXd>  Solve_Poissons(VectorXd * uL);
-void Construct_w_Derivative_z( std::vector<VectorXd> *  w);
+void Construct_w_Derivative_z(  std::vector<VectorXd> * w_Derivative_z , std::vector<VectorXd> *  w);
 
 #endif //FDM_FUNCTIONS_POISSON_H

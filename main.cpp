@@ -38,18 +38,17 @@ int main(int argc, char **argv) {
 
      //std::cout<< uL <<std::endl << "----------";
 
-    Construct_w_Derivative_z( &uPseparated);
+    std::vector<VectorXd> w_Derivative_z(qz);
+    Construct_w_Derivative_z( &w_Derivative_z, &uPseparated);
 
-   // for (int k = 0; k < qz; ++k)
+    for (int k = 0; k < qz; ++k)
 
         for (int l = 0; l < qy; ++l)
 
             for (int m = 0; m < qx; ++m)
             {
-                outputW<< std::scientific << std::setprecision(5) <<uPseparated[10].coeff(l*qy+m)<< std::setw(10) <<" "<< m+1 << " " << l+1 << " " << 1 << std::endl;
-
+                outputW<< std::scientific << std::setprecision(5) <<w_Derivative_z[k].coeff(l*qy+m)<< std::setw(10) <<" "<< m+1 << " " << l+1 << " " << k+1 << std::endl;
             }
-
 
 
     return 0;
