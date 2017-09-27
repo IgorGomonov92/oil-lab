@@ -94,8 +94,11 @@ void Construct_BC_Poisson(VectorXd *bc)
     bc->fill(0);
     for (int i = 0; i < qx * qy; i++)
     {
-        if (i>qx*qy/3 && i<qx*qy*2/3)
-        bc->coeffRef(i) = 1.1;
+        if (i > qx * qy / 3 && i < qx * qy * 2 / 3 && i%qx>10 && i%qx<30)
+        {
+            bc->coeffRef(i) = -1.1;
+
+        }
     }
 
 }
@@ -197,7 +200,7 @@ void Construct_w_Derivative_z(  std::vector<VectorXd> * w_Derivative_z, std::vec
                 w_Derivative_z->at(i).coeffRef(j) = (w->at(i+1).coeff(j) - w->at(i-1).coeff(j))/2/h;
 
                      else if ( i == 0 )
-                          w_Derivative_z->at(0).coeffRef(j) = (w->at(1).coeff(j))/2/h;
+                          w_Derivative_z->at(0).coeffRef(j) = (-w->at(1).coeff(j))/2/h;
 
                             else if ( i == qz-1 )
                                 w_Derivative_z->at(qz-1).coeffRef(j) = (w->at(qz-1).coeff(j))/2/h;

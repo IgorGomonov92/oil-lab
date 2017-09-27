@@ -3,7 +3,8 @@
 //
 #include "functions_Laplace.h"
 #include "global.cpp"
-
+#include <fstream>
+#include <iomanip>
 
 
 using namespace std::chrono;
@@ -13,9 +14,14 @@ using namespace Eigen;
 
 void Construct_w0( VectorXd * w0 ) {
     w0->fill(0);
-    for (int i = 0; i < qx * qy; i++) {
-        if (i > qx * qy / 3 && i < qx * qy * 2 / 3)
-            w0->coeffRef(i) = 1.1;
+
+    for (int i = 0; i < qx * qy; i++)
+    {
+        if (i > qx * qy / 3 && i < qx * qy * 2 / 3 && i%qx>10 && i%qx<30)
+        {
+            w0->coeffRef(i) = -1.1;
+
+        }
 
     }
 }
@@ -86,12 +92,12 @@ void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
     //std::cout<<"E "<<E[i]<<";v "<<v[i]<<";lamda "<<lamda[i]<<";G "<<G[i]<< std::endl;
     //задаем граничные условия Неймана
     bc->coeffRef(0) = 2*G[0] / (lamda[0]+2*G[0]) * ( 4*w0->coeff(0) + w0->coeff(1) + w0->coeff(qx-1) ) / h / h;
-    bc->coeffRef(qx * qy - 1) = 2*G[0] / (lamda[0]+2*G[0]) * (w0->coeff(qx*qy-2) - 4*w0->coeff(qx*qy-1) + w0->coeff(qx*qy-qx-1)  ) / h / h;
+    bc->coeffRef(qx * qy - 1) = 2*G[0] / (lamda[0]+2*G[0]) * (w0->coeff(qx*qy -2) - 4*w0->coeff(qx*qy-1) + w0->coeff(qx*qy-qx-1)  ) / h / h;
 
 
-    for (int i = 1; i < qx * qy - 1; i++)
+    for (int i = 1; i < qx * qy - 2; i++)
     {
-        bc->coeffRef(i) = 2*G[0] / (lamda[0]+2*G[0]) * ( w0->coeff(i-1) - 4*w0->coeff(i) + w0->coeff(i+1) + w0->coeff(i-qx) + w0->coeff(i+qx) ) / h / h;
+        bc->coeffRef(i) = 2*G[0] / (lamda[0]+2*G[0]) * ( w0->coeff(i-1) -   4*w0->coeff(i) + w0->coeff(i+1) + w0->coeff(i-qx) + w0->coeff(i+qx) ) / h / h;
 
     }
 
@@ -124,6 +130,7 @@ VectorXd Solve_Laplace()
     VectorXd initGuess(n); // начальное значение для солвера
     VectorXd w0(qx*qy); // начальное поле перемещения по Oz
 
+
     Construct_w0(&w0);
     Construct_guess_L(&initGuess);
     Construct_matrix_Laplace(&AL);
@@ -153,6 +160,16 @@ VectorXd Solve_Laplace()
     std::cout << std::endl <<"Laplace  duration = " << durationL << " || "<<"iterations = " << solverL.iterations()<< std::endl;
 // закончили обсчет ур я Лапласа
 
+    std::ofstream outputB ("B.txt");
+    for (int k = 0; k < qz; ++k)
+
+        for (int l = 0; l < qy; ++l)
+
+            for (int m = 0; m < qx; ++m)
+            {
+                outputB<< std::scientific << std::setprecision(5) <<u.coeff(k*qx*qy+l*qy+m)<< std::setw(10) <<" "<< m+1 << " " << l+1 << " " << k+1 << std::endl;
+            }
+    outputB.close();
     return u;
 
 }
