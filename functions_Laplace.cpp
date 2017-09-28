@@ -13,11 +13,11 @@ using namespace Eigen;
 //--------------------------------------------------------------------------------------
 
 void Construct_w0( VectorXd * w0 ) {
-    w0->fill(0);
+    w0->fill(0.0);
 
     for (int i = 0; i < qx * qy; i++)
     {
-        if (i > qx * qy / 3 && i < qx * qy * 2 / 3 && i%qx>10 && i%qx<30)
+        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)*1.0/400.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)*1.0/100.0 ) <= 1)
         {
             w0->coeffRef(i) = -1.1;
 
@@ -160,16 +160,8 @@ VectorXd Solve_Laplace()
     std::cout << std::endl <<"Laplace  duration = " << durationL << " || "<<"iterations = " << solverL.iterations()<< std::endl;
 // закончили обсчет ур я Лапласа
 
-    std::ofstream outputB ("B.txt");
-    for (int k = 0; k < qz; ++k)
 
-        for (int l = 0; l < qy; ++l)
 
-            for (int m = 0; m < qx; ++m)
-            {
-                outputB<< std::scientific << std::setprecision(5) <<u.coeff(k*qx*qy+l*qy+m)<< std::setw(10) <<" "<< m+1 << " " << l+1 << " " << k+1 << std::endl;
-            }
-    outputB.close();
     return u;
 
 }

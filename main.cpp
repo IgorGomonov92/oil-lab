@@ -41,6 +41,16 @@ int main(int argc, char **argv) {
     std::vector<VectorXd> w_Derivative_z(qz);
     Construct_w_Derivative_z( &w_Derivative_z, &uPseparated);
 
+    std::ofstream outputB ("B.txt");
+    for (int k = 0; k < qz; ++k)
+
+        for (int l = 0; l < qy; ++l)
+
+            for (int m = 0; m < qx; ++m)
+            {
+                outputB<< std::scientific << std::setprecision(5) <<uPseparated[k].coeff(l*qy+m)<< std::setw(10) <<" "<< m+1 << " " << l+1 << " " << k+1 << std::endl;
+            }
+    outputB.close();
 
 
     return 0;

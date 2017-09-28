@@ -3,6 +3,8 @@
 //
 #include "global.cpp"
 #include "functions_Poisson.h"
+#include <fstream>
+#include <iomanip>
 
 
 using namespace std::chrono;
@@ -91,10 +93,10 @@ void Construct_f(std::vector<VectorXd> *f, VectorXd * uL)
 // задаем граничные условия
 void Construct_BC_Poisson(VectorXd *bc)
 {
-    bc->fill(0);
+    bc->fill(0.0);
     for (int i = 0; i < qx * qy; i++)
     {
-        if (i > qx * qy / 3 && i < qx * qy * 2 / 3 && i%qx>10 && i%qx<30)
+        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)*1.0/400.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)*1.0/100.0 ) <= 1)
         {
             bc->coeffRef(i) = -1.1;
 
@@ -174,6 +176,10 @@ std::vector<VectorXd> Solve_Poissons(VectorXd * uL)
 // считаем новую правую часть
         Construct_load_Poisson(&bP, bc_prom_P, &f[i]);
     }
+
+
+
+
 
     //--------------
     high_resolution_clock::time_point tP2 = high_resolution_clock::now();
