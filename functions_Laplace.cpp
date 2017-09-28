@@ -17,9 +17,9 @@ void Construct_w0( VectorXd * w0 ) {
 
     for (int i = 0; i < qx * qy; i++)
     {
-        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)*1.0/400.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)*1.0/100.0 ) <= 1)
+        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/100.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)/400.0  ) <= 1)
         {
-            w0->coeffRef(i) = -1.1;
+            w0->coeffRef(i) = -10.1;
 
         }
 

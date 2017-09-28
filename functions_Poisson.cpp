@@ -75,13 +75,13 @@ void Construct_f(std::vector<VectorXd> *f, VectorXd * uL)
         {
            // std::cout<<f->at(i).coeffRef(j)<< std::endl;
             if ( i > 0  && i < (qz-1) )
-                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(i*qx*qy+j+qx*qy) - uL->coeff(i*qx*qy+j-qx*qy))/2/h;
+                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy) - uL->coeff(i*qx*qy+j-qx*qy))/2/h;
 
                     else if ( i == 0 )
-                        f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(uL->coeff(i*qx*qy+j+qx*qy))/2/h;
+                        f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy))/2/h;
 
                             else if ( i == (qz-1) )
-                                f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )*(-uL->coeff(i*qx*qy+j-qx*qy))/2/h;
+                                f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )/G[i]*(-uL->coeff(i*qx*qy+j-qx*qy))/2/h;
 
         }
     }
@@ -96,9 +96,9 @@ void Construct_BC_Poisson(VectorXd *bc)
     bc->fill(0.0);
     for (int i = 0; i < qx * qy; i++)
     {
-        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)*1.0/400.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)*1.0/100.0 ) <= 1)
+        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/100.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)/400.0  ) <= 1)
         {
-            bc->coeffRef(i) = -1.1;
+            bc->coeffRef(i) = -10.1;
 
         }
     }
@@ -127,17 +127,29 @@ std::vector<VectorXd> Solve_Poissons(VectorXd * uL)
     std::vector<VectorXd> uP(qz + 1); //неизв векторы ур ия Пуассона
     VectorXd bP(nP);
     std::vector<VectorXd> f(qz + 1);
-    VectorXd *bc_prom_P = &bcP; //промежуточный вектор
+    VectorXd *bc_prom_P = nullptr; //промежуточный вектор
     VectorXd initGuess(nP); // начальное значение для солвера
 
     Construct_f(&f, uL);
 
-    bc_prom_P->resize(nP);
+    //bc_prom_P->resize(nP);
 
     Construct_guess_P(&initGuess);
     Construct_matrix_Poisson(&AP);
     Construct_BC_Poisson(&bcP);
     Construct_load_Poisson(&bP, &bcP, &f[0]);
+
+
+    std::ofstream outputB ("B.txt");
+    //for (int k = 0; k < qz; ++k)
+
+    for (int l = 0; l < qy; ++l)
+
+        for (int m = 0; m < qx; ++m)
+        {
+            outputB<< std::scientific << std::setprecision(5) <<bcP.coeff(l*qy+m)<< std::setw(10) <<" "<< m+1 << " " << l+1 << " " << 1 << std::endl;
+        }
+    outputB.close();
 
 
     for (int i = 0; i < qz; ++i)
@@ -167,12 +179,15 @@ std::vector<VectorXd> Solve_Poissons(VectorXd * uL)
     {
         uP[i] = solverP.solve(bP);
 // граничное условие на след шаге по z равно первому слою решения на предыдущем шаге
-        bc_prom_P->fill(0);
+        bc_prom_P = &uP[i];
 
-        for (int j = 0; j < qx*qy; ++j)
+        // bc_prom_P->fill(0.0);
+     /*   for (int j = 0; j < qx*qy; ++j)
         {
             bc_prom_P->coeffRef(j) = uP[i].coeff(j);
         }
+
+        */
 // считаем новую правую часть
         Construct_load_Poisson(&bP, bc_prom_P, &f[i]);
     }
