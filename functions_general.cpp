@@ -15,7 +15,7 @@ void Construct_E( std::vector<double> * E)
 {
     for (int i = 0; i < qz; ++i)
     {
-        E->at(i) = 1.0;
+        E->at(i) = 1.0e+10;
     }
 }
 
@@ -25,7 +25,7 @@ void Construct_v(std::vector<double> * v )
 {
     for (int i = 0; i < qz; ++i)
     {
-        v->at(i) = 2.0;
+        v->at(i) = 0.3;
     }
 
 }
@@ -38,6 +38,7 @@ void Construct_lamda(std::vector<double> * lamda ,std::vector<double> * E,std::v
     {
         lamda->at(i) = E->at(i)*v->at(i) / (1+v->at(i)) / (1-2*v->at(i));
     }
+
 
 }
 

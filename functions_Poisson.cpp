@@ -98,7 +98,7 @@ void Construct_BC_Poisson(VectorXd *bc)
     {
         if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/100.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)/400.0  ) <= 1)
         {
-            bc->coeffRef(i) = -10.1;
+            bc->coeffRef(i) = -1+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(100.0-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(400.0-i/(qx)+qx/2)   );
 
         }
     }
@@ -140,16 +140,7 @@ std::vector<VectorXd> Solve_Poissons(VectorXd * uL)
     Construct_load_Poisson(&bP, &bcP, &f[0]);
 
 
-    std::ofstream outputB ("B.txt");
-    //for (int k = 0; k < qz; ++k)
 
-    for (int l = 0; l < qy; ++l)
-
-        for (int m = 0; m < qx; ++m)
-        {
-            outputB<< std::scientific << std::setprecision(5) <<bcP.coeff(l*qy+m)<< std::setw(10) <<" "<< m+1 << " " << l+1 << " " << 1 << std::endl;
-        }
-    outputB.close();
 
 
     for (int i = 0; i < qz; ++i)

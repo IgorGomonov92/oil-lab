@@ -19,7 +19,7 @@ void Construct_w0( VectorXd * w0 ) {
     {
         if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/100.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)/400.0  ) <= 1)
         {
-            w0->coeffRef(i) = -10.1;
+            w0->coeffRef(i) = -1+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(100.0-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(400.0-i/(qx)+qx/2)   );
 
         }
 
@@ -159,6 +159,7 @@ VectorXd Solve_Laplace()
     auto durationL = duration_cast<seconds>(tL2 - tL1).count();
     std::cout << std::endl <<"Laplace  duration = " << durationL << " || "<<"iterations = " << solverL.iterations()<< std::endl;
 // закончили обсчет ур я Лапласа
+
 
 
 
