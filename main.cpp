@@ -42,15 +42,23 @@ int main(int argc, char **argv) {
     Construct_w_Derivative_z( &w_Derivative_z, &uPseparated);
 
     std::vector<double> E(qz), v(qz), lamda(qz), G(qz) ; // упругие параметры
-    VectorXd w0(qx*qy);
+    VectorXd w0(qx*qy), bc(n);
 
     Construct_w0(&w0);
     Construct_E(&E);
     Construct_v(&v);
     Construct_lamda(&lamda, &E, &v);
     Construct_G(&G, &E, &v);
+    Construct_BC_Laplace(&bc, &w0);
 
-
+    std::ofstream outputB ("output.txt");
+    //for (int k = 0; k < qz; ++k)
+        for (int l = 0; l < qy; ++l)
+            for (int m = 0; m < qx; ++m)
+            {
+                outputB << std::scientific << std::setprecision(5) <<w0(l*qy+m) <<"  " <<bc(l*qy+m) <<"  " <<uL.coeff(l*qy+m) <<"  "<<  lamda[0]*uL.coeff(l*qy+m) + 2*G[0]*w_Derivative_z[0].coeff(l*qy+m)  << "   "<< m+1 << " " << l+1 << " " << 1 << std::endl;
+            }
+    outputB.close();
 
 
     return 0;

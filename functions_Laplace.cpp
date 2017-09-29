@@ -97,9 +97,10 @@ void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
     //bc->coeffRef(qx * qy - 1) = 2*G[0] / (lamda[0]+2*G[0]) * (w0->coeff(qx*qy -2) - 4*w0->coeff(qx*qy-1) + w0->coeff(qx*qy-qx-1)  ) / h / h;
 
 
-    for (int i = 1; i < qx * qy - 1 - qx; i++)
+    for (int i = 1; i < qx * qy - 1 - qx*2; i++)
     {
-        bc->coeffRef(i) = 2*G[0] / (lamda[0]+2*G[0]) * ( w0->coeff(i-1) -   4*w0->coeff(i) + w0->coeff(i+1) + w0->coeff(i-qx) + w0->coeff(i+qx) ) / h / h;
+        // делаем сред арифмет производных для сглаживания артефактов
+        bc->coeffRef(i) = 2*G[0] / (lamda[0]+2*G[0]) * ( w0->coeff(i-1) - 4*w0->coeff(i) +  w0->coeff(i+1) +   w0->coeff(i-qx) + w0->coeff(i+qx)  )  / h / h  ;
 
     }
 
@@ -164,14 +165,7 @@ VectorXd Solve_Laplace()
     std::cout << std::endl <<"Laplace  duration = " << durationL << " || "<<"iterations = " << solverL.iterations()<< std::endl;
 // закончили обсчет ур я Лапласа
 
-    std::ofstream outputB ("B.txt");
-    for (int k = 0; k < qz; ++k)
-        for (int l = 0; l < qy; ++l)
-            for (int m = 0; m < qx; ++m)
-            {
-                outputB << std::scientific << std::setprecision(5) <<w0.coeff(l*qy+m) << "  "<< bc.coeff(l*qy+m)/*lamda[0]*uL.coeff(l*qy+m) + 2*G[0]*w_Derivative_z[k].coeff(l*qy+m) */ << "   "<< m+1 << " " << l+1 << " " << k+1 << std::endl;
-            }
-    outputB.close();
+
 
 
     return u;
