@@ -11,15 +11,16 @@ using namespace std::chrono;
 using namespace Eigen;
 
 //--------------------------------------------------------------------------------------
+//задаем  начальное раскрытие
 
 void Construct_w0( VectorXd * w0 ) {
     w0->fill(0.0);
 
     for (int i = 0; i < qx * qy; i++)
     {
-        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/100.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)/400.0  ) <= 1)
+        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/100.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)/400.0  ) < 0.9)
         {
-            w0->coeffRef(i) = -1+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(100.0-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(400.0-i/(qx)+qx/2)   );
+            w0->coeffRef(i) = -1.0+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(100.0-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(400.0-i/(qx)+qx/2)   );
 
         }
 
@@ -86,16 +87,17 @@ void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
     Construct_lamda(&lamda, &E, &v);
     Construct_G(&G, &E, &v);
 
-    bc->fill(0);
+    bc->fill(0.0);
 
    // for (int i = 0; i < qz; ++i)
     //std::cout<<"E "<<E[i]<<";v "<<v[i]<<";lamda "<<lamda[i]<<";G "<<G[i]<< std::endl;
+
     //задаем граничные условия Неймана
-    bc->coeffRef(0) = 2*G[0] / (lamda[0]+2*G[0]) * ( 4*w0->coeff(0) + w0->coeff(1) + w0->coeff(qx-1) ) / h / h;
-    bc->coeffRef(qx * qy - 1) = 2*G[0] / (lamda[0]+2*G[0]) * (w0->coeff(qx*qy -2) - 4*w0->coeff(qx*qy-1) + w0->coeff(qx*qy-qx-1)  ) / h / h;
+    //bc->coeffRef(0) = 2*G[0] / (lamda[0]+2*G[0]) * ( 4*w0->coeff(0) + w0->coeff(1) + w0->coeff(qx-1) ) / h / h;
+    //bc->coeffRef(qx * qy - 1) = 2*G[0] / (lamda[0]+2*G[0]) * (w0->coeff(qx*qy -2) - 4*w0->coeff(qx*qy-1) + w0->coeff(qx*qy-qx-1)  ) / h / h;
 
 
-    for (int i = 1; i < qx * qy - 2; i++)
+    for (int i = 1; i < qx * qy - 1 - qx; i++)
     {
         bc->coeffRef(i) = 2*G[0] / (lamda[0]+2*G[0]) * ( w0->coeff(i-1) -   4*w0->coeff(i) + w0->coeff(i+1) + w0->coeff(i-qx) + w0->coeff(i+qx) ) / h / h;
 
@@ -131,11 +133,13 @@ VectorXd Solve_Laplace()
     VectorXd w0(qx*qy); // начальное поле перемещения по Oz
 
 
+
     Construct_w0(&w0);
     Construct_guess_L(&initGuess);
     Construct_matrix_Laplace(&AL);
     Construct_BC_Laplace(&bc, &w0);
     Construct_load_Laplace(&b, &bc);
+
 
 
 
@@ -160,7 +164,14 @@ VectorXd Solve_Laplace()
     std::cout << std::endl <<"Laplace  duration = " << durationL << " || "<<"iterations = " << solverL.iterations()<< std::endl;
 // закончили обсчет ур я Лапласа
 
-
+    std::ofstream outputB ("B.txt");
+    for (int k = 0; k < qz; ++k)
+        for (int l = 0; l < qy; ++l)
+            for (int m = 0; m < qx; ++m)
+            {
+                outputB << std::scientific << std::setprecision(5) <<w0.coeff(l*qy+m) << "  "<< bc.coeff(l*qy+m)/*lamda[0]*uL.coeff(l*qy+m) + 2*G[0]*w_Derivative_z[k].coeff(l*qy+m) */ << "   "<< m+1 << " " << l+1 << " " << k+1 << std::endl;
+            }
+    outputB.close();
 
 
     return u;

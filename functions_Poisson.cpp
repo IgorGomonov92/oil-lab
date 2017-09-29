@@ -96,9 +96,9 @@ void Construct_BC_Poisson(VectorXd *bc)
     bc->fill(0.0);
     for (int i = 0; i < qx * qy; i++)
     {
-        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/100.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)/400.0  ) <= 1)
+        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/100.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)/400.0  ) < 0.9)
         {
-            bc->coeffRef(i) = -1+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(100.0-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(400.0-i/(qx)+qx/2)   );
+            bc->coeffRef(i) = -1.0+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(100.0-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(400.0-i/(qx)+qx/2)   );
 
         }
     }
@@ -198,7 +198,7 @@ std::vector<VectorXd> Solve_Poissons(VectorXd * uL)
 }
 
 //--------------------------------------------------------------------------------------
-
+//считаем производную dw/dz
 void Construct_w_Derivative_z(  std::vector<VectorXd> * w_Derivative_z, std::vector<VectorXd> * w )
 {
     for (int i = 0; i < qz; ++i)
