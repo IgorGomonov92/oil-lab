@@ -77,10 +77,10 @@ void Construct_f(std::vector<VectorXd> *f, VectorXd * uL)
             if ( i > 0  && i < (qz-1) )
                  f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy) - uL->coeff(i*qx*qy+j-qx*qy))/2/h;
 
-                    else if ( i == 0 )
+            else if ( i == 0 )
                         f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy))/2/h;
 
-                            else if ( i == (qz-1) )
+            else if ( i == (qz-1) )
                                 f->at(i).coeffRef(j) = ( -G[i] - lamda[i] )/G[i]*(-uL->coeff(i*qx*qy+j-qx*qy))/2/h;
 
         }
@@ -98,7 +98,9 @@ void Construct_BC_Poisson(VectorXd *bc)
     {
         if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/A/A + (i/(qx)-qx/2)*(i/(qx)-qx/2)/B/B  ) < 0.9)
         {
-            bc->coeffRef(i) = -1.0+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(A*A-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(B*B-i/(qx)+qx/2)   );
+            bc->coeffRef(i) =  1.0  ;
+
+            //           bc->coeffRef(i) =  1.0*(1- (i%(qx)-qx/2)*(i%(qx)-qx/2)/A/A - (i/(qx)-qx/2)*(i/(qx)-qx/2)/B/B  ) ;
         }
     }
 

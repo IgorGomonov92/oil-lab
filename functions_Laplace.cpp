@@ -20,7 +20,7 @@ void Construct_w0( VectorXd * w0 ) {
     {
         if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/A/A + (i/(qx)-qx/2)*(i/(qx)-qx/2)/B/B  ) < 0.9)
         {
-            w0->coeffRef(i) = -1.0+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(A*A-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(B*B-i/(qx)+qx/2)   );
+            w0->coeffRef(i) =  1.0   ;
 
         }
 
