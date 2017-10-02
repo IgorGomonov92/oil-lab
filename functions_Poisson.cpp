@@ -24,13 +24,13 @@ void Construct_matrix_Poisson(SparseMatrix<double> *a)
         {
             for (int i = 1; i <= qx; i++)
             {
-                if (k > 1) a->insert(row, row - qx * qy) = 1;
-                if (j > 1) a->insert(row, row - qx) = 1;
-                if (i > 1) a->insert(row, row - 1) = 1;
-                a->insert(row, row) = -6;
-                if (k < 2) a->insert(row, row + qx * qy) = 1;
-                if (j < qy) a->insert(row, row + qx) = 1;
-                if (i < qx) a->insert(row, row + 1) = 1;
+                if (k > 1)       a->insert(row, row - qx * qy) = 1;
+                if (j > 1)       a->insert(row, row - qx) = 1;
+                if (i > 1)       a->insert(row, row - 1) = 1;
+                                 a->insert(row, row) = -6;
+                if (k < 2)       a->insert(row, row + qx * qy) = 1;
+                if (j < qy)      a->insert(row, row + qx) = 1;
+                if (i < qx)      a->insert(row, row + 1) = 1;
                 row++;
 
             }
@@ -96,9 +96,9 @@ void Construct_BC_Poisson(VectorXd *bc)
     bc->fill(0.0);
     for (int i = 0; i < qx * qy; i++)
     {
-        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/100.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)/400.0  ) < 0.9)
+        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/A/A + (i/(qx)-qx/2)*(i/(qx)-qx/2)/B/B  ) < 0.9)
         {
-            bc->coeffRef(i) = -1.0+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(100.0-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(400.0-i/(qx)+qx/2)   );
+            bc->coeffRef(i) = -1.0;
 
         }
     }

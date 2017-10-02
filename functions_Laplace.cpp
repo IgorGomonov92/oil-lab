@@ -18,9 +18,9 @@ void Construct_w0( VectorXd * w0 ) {
 
     for (int i = 0; i < qx * qy; i++)
     {
-        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/100.0 + (i/(qx)-qx/2)*(i/(qx)-qx/2)/400.0  ) < 0.9)
+        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/A/A + (i/(qx)-qx/2)*(i/(qx)-qx/2)/B/B  ) < 0.9)
         {
-            w0->coeffRef(i) = -1.0+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(100.0-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(400.0-i/(qx)+qx/2)   );
+            w0->coeffRef(i) = -1.0;
 
         }
 
@@ -43,15 +43,15 @@ void Construct_matrix_Laplace(SparseMatrix<double> *a)
         {
             for (int i = 1; i <= qx; i++)
             {
-                if (k > 1) a->insert(row, row - qx * qy) = 1;
-                if (j > 1) a->insert(row, row - qx) = 1;
-                if (i > 1) a->insert(row, row - 1) = 1;
-                a->insert(row, row) = -6;
-                if (k < qz && row >= qx * qy) a->insert(row, row + qx * qy) = 1;
-                if (j < qy) a->insert(row, row + qx) = 1;
-                if (i < qx) a->insert(row, row + 1) = 1;
+                if (k > 1)                      a->insert(row, row - qx * qy) = 1;
+                if (j > 1)                      a->insert(row, row - qx) = 1;
+                if (i > 1)                      a->insert(row, row - 1) = 1;
+                                                a->insert(row, row) = -6;
+                if (k < qz && row >= qx * qy)   a->insert(row, row + qx * qy) = 1;
+                if (j < qy)                     a->insert(row, row + qx) = 1;
+                if (i < qx)                     a->insert(row, row + 1) = 1;
                 //implementing Neumann B.C.
-                if (k < qz && row < qx * qy) a->insert(row, row + qx * qy) = 2;
+                if (k < qz && row < qx * qy)    a->insert(row, row + qx * qy) = 2;
                 row++;
 
             }

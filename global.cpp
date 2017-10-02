@@ -11,6 +11,7 @@ const long qx=100, qy=100, qz=10;
 const long n = qx * qy * qz;
 const long nP = qx * qy * 2;
 const double h=1.0/qx, error=1.e-5; // шаг сетки и невязка
+const double A = 20.0, B = 10.0;// полуоси эллипса раскрытия
 
 typedef Eigen::SparseMatrix<double > SpMat;
 typedef Eigen::Triplet<double> T;

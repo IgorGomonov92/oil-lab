@@ -17,9 +17,8 @@ using namespace std::chrono;
 int main(int argc, char **argv) {
     omp_set_num_threads(omp_get_max_threads());
     Eigen::setNbThreads(omp_get_max_threads());
-    std::ofstream outputW ("W.txt");
 
-
+    std::vector<T> coeffs;
     VectorXd uL;// вектора решений
     std::vector<VectorXd> uP(qz+1), uPseparated(qz+1); // Вектор решения одного слоя уравнения пуассона содержит два слоя из=за необх учитывать ГУ Дирихле
 
