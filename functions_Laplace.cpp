@@ -20,7 +20,7 @@ void Construct_w0( VectorXd * w0 ) {
     {
         if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/A/A + (i/(qx)-qx/2)*(i/(qx)-qx/2)/B/B  ) < 0.9)
         {
-            w0->coeffRef(i) = -1.0;
+            w0->coeffRef(i) = -1.0+ ((i%(qx)-qx/2)*(i%(qx)-qx/2)/(A*A-i%(qx)+qx/2) + (i/(qx)-qx/2)*(i/(qx)-qx/2)/(B*B-i/(qx)+qx/2)   );
 
         }
 
@@ -33,7 +33,7 @@ void Construct_w0( VectorXd * w0 ) {
 // собираем матрицу СЛАУ для ур ия лапласа
 void Construct_matrix_Laplace(SparseMatrix<double> *a)
 {
-    int row = 0;
+    long row = 0;
     a->reserve(VectorXi::Constant(n, 7));
 
 
@@ -43,15 +43,15 @@ void Construct_matrix_Laplace(SparseMatrix<double> *a)
         {
             for (int i = 1; i <= qx; i++)
             {
-                if (k > 1)                      a->insert(row, row - qx * qy) = 1;
-                if (j > 1)                      a->insert(row, row - qx) = 1;
-                if (i > 1)                      a->insert(row, row - 1) = 1;
-                                                a->insert(row, row) = -6;
-                if (k < qz && row >= qx * qy)   a->insert(row, row + qx * qy) = 1;
-                if (j < qy)                     a->insert(row, row + qx) = 1;
-                if (i < qx)                     a->insert(row, row + 1) = 1;
+                if (k > 1)                      a->insert(row, row - qx * qy)   = 1;
+                if (j > 1)                      a->insert(row, row - qx)        = 1;
+                if (i > 1)                      a->insert(row, row - 1)         = 1;
+                                                a->insert(row, row)             = -6;
+                if (k < qz && row >= qx * qy)   a->insert(row, row + qx * qy)   = 1;
+                if (j < qy)                     a->insert(row, row + qx)        = 1;
+                if (i < qx)                     a->insert(row, row + 1)         = 1;
                 //implementing Neumann B.C.
-                if (k < qz && row < qx * qy)    a->insert(row, row + qx * qy) = 2;
+                if (k < qz && row < qx * qy)    a->insert(row, row + qx * qy)   = 2;
                 row++;
 
             }
@@ -89,17 +89,8 @@ void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
 
     bc->fill(0.0);
 
-   // for (int i = 0; i < qz; ++i)
-    //std::cout<<"E "<<E[i]<<";v "<<v[i]<<";lamda "<<lamda[i]<<";G "<<G[i]<< std::endl;
-
-    //задаем граничные условия Неймана
-    //bc->coeffRef(0) = 2*G[0] / (lamda[0]+2*G[0]) * ( 4*w0->coeff(0) + w0->coeff(1) + w0->coeff(qx-1) ) / h / h;
-    //bc->coeffRef(qx * qy - 1) = 2*G[0] / (lamda[0]+2*G[0]) * (w0->coeff(qx*qy -2) - 4*w0->coeff(qx*qy-1) + w0->coeff(qx*qy-qx-1)  ) / h / h;
-
-
-    for (int i = 1; i < qx * qy - 1 - qx*2; i++)
+    for (int i = 1; i < qx * qy -  qx; i++)
     {
-        // делаем сред арифмет производных для сглаживания артефактов
         bc->coeffRef(i) = 2*G[0] / (lamda[0]+2*G[0]) * ( w0->coeff(i-1) - 4*w0->coeff(i) +  w0->coeff(i+1) +   w0->coeff(i-qx) + w0->coeff(i+qx)  )  / h / h  ;
 
     }
@@ -133,16 +124,11 @@ VectorXd Solve_Laplace()
     VectorXd initGuess(n); // начальное значение для солвера
     VectorXd w0(qx*qy); // начальное поле перемещения по Oz
 
-
-
     Construct_w0(&w0);
     Construct_guess_L(&initGuess);
     Construct_matrix_Laplace(&AL);
     Construct_BC_Laplace(&bc, &w0);
     Construct_load_Laplace(&b, &bc);
-
-
-
 
     u.fill(0);
     // Решаем уравнение Лапласа
@@ -164,8 +150,6 @@ VectorXd Solve_Laplace()
     auto durationL = duration_cast<seconds>(tL2 - tL1).count();
     std::cout << std::endl <<"Laplace  duration = " << durationL << " || "<<"iterations = " << solverL.iterations()<< std::endl;
 // закончили обсчет ур я Лапласа
-
-
 
 
     return u;

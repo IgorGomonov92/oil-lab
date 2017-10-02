@@ -18,8 +18,8 @@ int main(int argc, char **argv) {
     omp_set_num_threads(omp_get_max_threads());
     Eigen::setNbThreads(omp_get_max_threads());
 
-    std::vector<T> coeffs;
-    VectorXd uL;// вектора решений
+
+    VectorXd uL;// вектор  решений уравнения лапласа
     std::vector<VectorXd> uP(qz+1), uPseparated(qz+1); // Вектор решения одного слоя уравнения пуассона содержит два слоя из=за необх учитывать ГУ Дирихле
 
     uL = Solve_Laplace();
@@ -50,14 +50,14 @@ int main(int argc, char **argv) {
     Construct_G(&G, &E, &v);
     Construct_BC_Laplace(&bc, &w0);
 
-    std::ofstream outputB ("output.txt");
+    std::ofstream output ("output.txt");
     //for (int k = 0; k < qz; ++k)
         for (int l = 0; l < qy; ++l)
             for (int m = 0; m < qx; ++m)
             {
-                outputB << std::scientific << std::setprecision(5) <<w0(l*qy+m) <<"  " <<bc(l*qy+m) <<"  " <<uL.coeff(l*qy+m) <<"  "<<  lamda[0]*uL.coeff(l*qy+m) + 2*G[0]*w_Derivative_z[0].coeff(l*qy+m)  << "   "<< m+1 << " " << l+1 << " " << 1 << std::endl;
+                output << std::scientific << std::setprecision(5) <<w0(l*qy+m) <<"  " <<bc(l*qy+m) <<"  " <<uL.coeff(l*qy+m) <<"  "<<  lamda[0]*uL.coeff(l*qy+m) + 2*G[0]*w_Derivative_z[0].coeff(l*qy+m)  << "   "<< m+1 << " " << l+1 << " " << 1 << std::endl;
             }
-    outputB.close();
+    output.close();
 
 
     return 0;
