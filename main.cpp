@@ -15,11 +15,11 @@ using namespace Eigen;
 using namespace std::chrono;
 
 int main(int argc, char **argv) {
-    omp_set_num_threads(omp_get_max_threads());
-    Eigen::setNbThreads(omp_get_max_threads());
+   // omp_set_num_threads(omp_get_max_threads());
+   // Eigen::setNbThreads(omp_get_max_threads());
 
 
-    VectorXd uL;// вектор  решений уравнения лапласа
+    VectorXd uL(n);// вектор  решений уравнения лапласа
     std::vector<VectorXd> uP(qz+1), uPseparated(qz+1); // Вектор решения одного слоя уравнения пуассона содержит два слоя из=за необх учитывать ГУ Дирихле
 
     uL = Solve_Laplace();

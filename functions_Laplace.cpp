@@ -46,7 +46,9 @@ void Construct_matrix_Laplace(SparseMatrix<double> *a)
                 if (k > 1)                      a->insert(row, row - qx * qy)   = 1;
                 if (j > 1)                      a->insert(row, row - qx)        = 1;
                 if (i > 1)                      a->insert(row, row - 1)         = 1;
+
                                                 a->insert(row, row)             = -6;
+
                 if (k < qz && row >= qx * qy)   a->insert(row, row + qx * qy)   = 1;
                 if (j < qy)                     a->insert(row, row + qx)        = 1;
                 if (i < qx)                     a->insert(row, row + 1)         = 1;
