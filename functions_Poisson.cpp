@@ -28,7 +28,7 @@ void Construct_matrix_Poisson(SparseMatrix<double> *a)
                 if (j > 1)       a->insert(row, row - qx) = 1;
                 if (i > 1)       a->insert(row, row - 1) = 1;
                                  a->insert(row, row) = -6;
-                if (k < qz)       a->insert(row, row + qx * qy) = 1;
+                if (k < qz)      a->insert(row, row + qx * qy) = 1;
                 if (j < qy)      a->insert(row, row + qx) = 1;
                 if (i < qx)      a->insert(row, row + 1) = 1;
                 row++;
@@ -98,9 +98,9 @@ void Construct_BC_Poisson(VectorXd *bc)
 
     for (int i = 0; i < qx * qy; i++)
     {
-        if ( ((i%(qx)-qx/2.0)*(i%(qx)-qx/2.0)/A/A + (i/(qx)-qx/2.0)*(i/(qx)-qx/2.0)/B/B  ) < 0.9)
+        if ( ((i%(qx)-qx/2.0)*(i%(qx)-qx/2.0)/A/A + (i/(qx)-qx/2.0)*(i/(qx)-qx/2.0)/B/B  ) < 1.0)
         {
-            bc->coeffRef(i) =   4e7/G[0]/E[0]*(1-v[0])*B*sqrt(1- ((i%(qx)-qx/2.0)*(i%(qx)-qx/2.0)/A/A + (i/(qx)-qx/2.0)*(i/(qx)-qx/2.0)/B/B  ));
+            bc->coeffRef(i) =   4e7/v[0]/E[0]*(1-v[0])*B*sqrt(1- ((i%(qx)-qx/2.0)*(i%(qx)-qx/2.0)/A/A + (i/(qx)-qx/2.0)*(i/(qx)-qx/2.0)/B/B  ));
 
             //           bc->coeffRef(i) =  1.0*(1- (i%(qx)-qx/2)*(i%(qx)-qx/2)/A/A - (i/(qx)-qx/2)*(i/(qx)-qx/2)/B/B  ) ;
         }
@@ -140,7 +140,7 @@ VectorXd Solve_Poisson(VectorXd * uL)
     Construct_load_Poisson(&bP, &bcP, &f);
 
 
-//--------решаем уравнение Пуассона в каждом слое, где упругие параметры = const
+
 
     BiCGSTAB<SparseMatrix<double, RowMajor> > solverP;
 // relative residual error: |Ax-b|/|b|

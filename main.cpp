@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 
 
     VectorXd uL(n);// вектор  решений уравнения лапласа
-    VectorXd uP(n); // Вектор решения одного слоя уравнения пуассона содержит два слоя из=за необх учитывать ГУ Дирихле
+    VectorXd uP(n);
 
     uL = Solve_Laplace();
     uP = Solve_Poisson( &uL );
@@ -29,14 +29,20 @@ int main(int argc, char **argv) {
     VectorXd w0(qx*qy), bcP(n);
     VectorXd E(qz), v(qz), lamda(qz), G(qz) ; // упругие параметры
     VectorXd w_Derivative_z(n);
+
+    Construct_E(&E);
+    Construct_v(&v);
+    Construct_lamda(&lamda, &E, &v);
+    Construct_G(&G, &E, &v);
     Construct_w_Derivative_z( &w_Derivative_z, &uP);
+    Construct_w0(&w0);
 
     std::ofstream output ("output.txt");
-    //for (int k = 0; k < qz; ++k)
-    for (int l = 0; l < qy; ++l)
+    for (int k = 0; k < qz; ++k)
+      for (int l = 0; l < qy; ++l)
         for (int m = 0; m < qx; ++m)
         {
-            output << std::scientific << std::setprecision(5) <<uL.coeff(l*qy+m) <<"  "<< w_Derivative_z(l*qy+m) <<"  " <<  lamda[0]*uL.coeff(l*qy+m) + 2*G[0]*  w_Derivative_z.coeff(l*qy+m)  << "   "<< m+1 << " " << l+1 << " " << 1 << std::endl;
+            output << std::scientific << std::setprecision(5) << w0(l*qy+m) <<"  "<<lamda[0]* uL.coeff(l*qy+m) <<"  "<< w_Derivative_z(l*qy+m) <<"  " <<  lamda[0]*uL.coeff(l*qy+m) + 2*G[0]*  w_Derivative_z.coeff(l*qy+m)  << "   "<< m+1 << " " << l+1 << " " <<  k+1 << std::endl;
         }
     output.close();
 
