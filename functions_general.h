@@ -12,10 +12,10 @@
 using namespace Eigen;
 
 
-void Construct_E(std::vector<double> * E);
-void Construct_v(std::vector<double> * v );
-void Construct_lamda(std::vector<double> * lamda ,std::vector<double> * E,std::vector<double> * v);
-void Construct_G(std::vector<double> * G, std::vector<double> * E,std::vector<double> * v  );
+void Construct_E(VectorXd * E);
+void Construct_v(VectorXd * v );
+void Construct_lamda(VectorXd * lamda ,VectorXd * E,VectorXd * v);
+void Construct_G(VectorXd * G, VectorXd * E,VectorXd * v  );
 
 
 #endif //FDM_FUNCTIONS_GENERAL_H

@@ -20,43 +20,24 @@ int main(int argc, char **argv) {
 
 
     VectorXd uL(n);// вектор  решений уравнения лапласа
-    std::vector<VectorXd> uP(qz+1), uPseparated(qz+1); // Вектор решения одного слоя уравнения пуассона содержит два слоя из=за необх учитывать ГУ Дирихле
+    VectorXd uP(n); // Вектор решения одного слоя уравнения пуассона содержит два слоя из=за необх учитывать ГУ Дирихле
 
     uL = Solve_Laplace();
-    uP = Solve_Poissons( &uL );
+    uP = Solve_Poisson( &uL );
 
-    for (int i = 0; i < qz; ++i)
-    {
-        uPseparated[i].resize(qx*qy);
-        uPseparated[i].fill(0);
-        for (int j = 0; j <qx*qy ; ++j)
-        {
-            uPseparated[i].coeffRef(j) = uP[i].coeff(j);
-        }
-    }
 
-     //std::cout<< uL <<std::endl << "----------";
-
-    std::vector<VectorXd> w_Derivative_z(qz);
-    Construct_w_Derivative_z( &w_Derivative_z, &uPseparated);
-
-    std::vector<double> E(qz), v(qz), lamda(qz), G(qz) ; // упругие параметры
-    VectorXd w0(qx*qy), bc(n);
-
-    Construct_w0(&w0);
-    Construct_E(&E);
-    Construct_v(&v);
-    Construct_lamda(&lamda, &E, &v);
-    Construct_G(&G, &E, &v);
-    Construct_BC_Laplace(&bc, &w0);
+    VectorXd w0(qx*qy), bcP(n);
+    VectorXd E(qz), v(qz), lamda(qz), G(qz) ; // упругие параметры
+    VectorXd w_Derivative_z(n);
+    Construct_w_Derivative_z( &w_Derivative_z, &uP);
 
     std::ofstream output ("output.txt");
     //for (int k = 0; k < qz; ++k)
-        for (int l = 0; l < qy; ++l)
-            for (int m = 0; m < qx; ++m)
-            {
-                output << std::scientific << std::setprecision(5) <<w0(l*qy+m) <<"  " <<bc(l*qy+m) <<"  " <<uL.coeff(l*qy+m) <<"  "<<  lamda[0]*uL.coeff(l*qy+m) + 2*G[0]*w_Derivative_z[0].coeff(l*qy+m)  << "   "<< m+1 << " " << l+1 << " " << 1 << std::endl;
-            }
+    for (int l = 0; l < qy; ++l)
+        for (int m = 0; m < qx; ++m)
+        {
+            output << std::scientific << std::setprecision(5) <<uL.coeff(l*qy+m) <<"  "<< w_Derivative_z(l*qy+m) <<"  " <<  lamda[0]*uL.coeff(l*qy+m) + 2*G[0]*  w_Derivative_z.coeff(l*qy+m)  << "   "<< m+1 << " " << l+1 << " " << 1 << std::endl;
+        }
     output.close();
 
 

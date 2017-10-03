@@ -11,32 +11,32 @@ using namespace Eigen;
 
 //--------------------------------------------------------------------------------------
 
-void Construct_E( std::vector<double> * E)
+void Construct_E( VectorXd * E)
 {
     for (int i = 0; i < qz; ++i)
     {
-        E->at(i) = 1.0e+10;
+        E->coeffRef(i) = 1.0e+10;
     }
 }
 
 //--------------------------------------------------------------------------------------
 
-void Construct_v(std::vector<double> * v )
+void Construct_v(VectorXd * v )
 {
     for (int i = 0; i < qz; ++i)
     {
-        v->at(i) = 0.3;
+        v->coeffRef(i) = 0.3;
     }
 
 }
 
 //--------------------------------------------------------------------------------------
 
-void Construct_lamda(std::vector<double> * lamda ,std::vector<double> * E,std::vector<double> * v)
+void Construct_lamda(VectorXd * lamda ,VectorXd * E,VectorXd * v)
 {
     for (int i = 0; i < qz; ++i)
     {
-        lamda->at(i) = E->at(i)*v->at(i) / (1+v->at(i)) / (1-2*v->at(i));
+        lamda->coeffRef(i) = E->coeff(i)*v->coeff(i) / (1+v->coeff(i)) / (1-2*v->coeff(i));
     }
 
 
@@ -44,11 +44,11 @@ void Construct_lamda(std::vector<double> * lamda ,std::vector<double> * E,std::v
 
 //--------------------------------------------------------------------------------------
 
-void Construct_G( std::vector<double> * G ,std::vector<double> * E,std::vector<double> * v  )
+void Construct_G( VectorXd * G ,VectorXd * E,VectorXd * v  )
 {
     for (int i = 0; i < qz; ++i)
     {
-        G->at(i) = E->at(i) / 2 / (1+v->at(i));
+        G->coeffRef(i) = E->coeff(i) / 2 / (1+v->coeff(i));
     }
 
 }

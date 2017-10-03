@@ -5,6 +5,7 @@
 #include "global.cpp"
 #include <fstream>
 #include <iomanip>
+#include <math.h>
 
 
 using namespace std::chrono;
@@ -16,11 +17,18 @@ using namespace Eigen;
 void Construct_w0( VectorXd * w0 ) {
     w0->fill(0.0);
 
+    VectorXd E(qz), v(qz), lamda(qz), G(qz) ; // упругие параметры
+
+    Construct_E(&E);
+    Construct_v(&v);
+    Construct_lamda(&lamda, &E, &v);
+    Construct_G(&G, &E, &v);
+
     for (int i = 0; i < qx * qy; i++)
     {
-        if ( ((i%(qx)-qx/2)*(i%(qx)-qx/2)/A/A + (i/(qx)-qx/2)*(i/(qx)-qx/2)/B/B  ) < 0.9)
+        if ( ((i%(qx)-qx/2.0)*(i%(qx)-qx/2.0)/A/A + (i/(qx)-qx/2.0)*(i/(qx)-qx/2.0)/B/B  ) < 0.9)
         {
-            w0->coeffRef(i) =  1.0   ;
+            w0->coeffRef(i) =   4e7/G[0]/E[0]*(1-v[0])*B*sqrt(1- ((i%(qx)-qx/2.0)*(i%(qx)-qx/2.0)/A/A + (i/(qx)-qx/2.0)*(i/(qx)-qx/2.0)/B/B  ));
 
         }
 
@@ -82,7 +90,7 @@ void Construct_guess_L(VectorXd *initGuess)
 */
 void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
 {
-    std::vector<double> E(qz,0), v(qz,0), lamda(qz,0), G(qz,0); // упругие параметры
+    VectorXd E(qz), v(qz), lamda(qz), G(qz); // упругие параметры
     // заполняем вектотора упругих параметров в разных слоях соотв функциями
     Construct_E(&E);
     Construct_v(&v);
