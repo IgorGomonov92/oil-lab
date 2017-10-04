@@ -24,11 +24,15 @@ void Construct_w0( VectorXd * w0 ) {
     Construct_lamda(&lamda, &E, &v);
     Construct_G(&G, &E, &v);
 
-    for (int i = 0; i < qx * qy; i++)
+    for (int i = 0; i < qx ; i++)
     {
-        if ( ((i%(qx)-qx/2.0)*(i%(qx)-qx/2.0)/A/A + (i/(qx)-qx/2.0)*(i/(qx)-qx/2.0)/B/B  ) < 1.0)
+        for (int j = 0; j < qy ; ++j)
         {
-            w0->coeffRef(i) =   4e7/v[0]/E[0]*(1-v[0])*B*sqrt(1- ((i%(qx)-qx/2.0)*(i%(qx)-qx/2.0)/A/A + (i/(qx)-qx/2.0)*(i/(qx)-qx/2.0)/B/B  ));
+            if ( (((((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  ) < 1.0) )
+            {
+                w0->coeffRef(i*qx+j) =   4.0e7/v[0]/E[0]*(1-v[0])*B*sqrt(1-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
+
+            }
 
         }
 

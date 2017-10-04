@@ -3,6 +3,7 @@
 //
 #include "global.cpp"
 #include "functions_Poisson.h"
+#include "functions_Laplace.h"
 #include <fstream>
 #include <iomanip>
 
@@ -96,14 +97,18 @@ void Construct_BC_Poisson(VectorXd *bc)
     Construct_lamda(&lamda, &E, &v);
     Construct_G(&G, &E, &v);
 
-    for (int i = 0; i < qx * qy; i++)
+    for (int i = 0; i < qx ; i++)
     {
-        if ( ((i%(qx)-qx/2.0)*(i%(qx)-qx/2.0)/A/A + (i/(qx)-qx/2.0)*(i/(qx)-qx/2.0)/B/B  ) < 1.0)
+        for (int j = 0; j < qy ; ++j)
         {
-            bc->coeffRef(i) =   4e7/v[0]/E[0]*(1-v[0])*B*sqrt(1- ((i%(qx)-qx/2.0)*(i%(qx)-qx/2.0)/A/A + (i/(qx)-qx/2.0)*(i/(qx)-qx/2.0)/B/B  ));
+            if ( (((((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  ) < 1.0) )
+            {
+                bc->coeffRef(i*qx+j) =   4.0e7/v[0]/E[0]*(1-v[0])*B*sqrt(1-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
 
-            //           bc->coeffRef(i) =  1.0*(1- (i%(qx)-qx/2)*(i%(qx)-qx/2)/A/A - (i/(qx)-qx/2)*(i/(qx)-qx/2)/B/B  ) ;
+            }
+
         }
+
     }
 
 }
@@ -138,8 +143,6 @@ VectorXd Solve_Poisson(VectorXd * uL)
     Construct_matrix_Poisson(&AP);
     Construct_BC_Poisson(&bcP);
     Construct_load_Poisson(&bP, &bcP, &f);
-
-
 
 
     BiCGSTAB<SparseMatrix<double, RowMajor> > solverP;

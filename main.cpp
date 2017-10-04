@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
       for (int l = 0; l < qy; ++l)
         for (int m = 0; m < qx; ++m)
         {
-            output << std::scientific << std::setprecision(5) << w0(l*qy+m) <<"  "<<lamda[0]* uL.coeff(l*qy+m) <<"  "<< w_Derivative_z(l*qy+m) <<"  " <<  lamda[0]*uL.coeff(l*qy+m) + 2*G[0]*  w_Derivative_z.coeff(l*qy+m)  << "   "<< m+1 << " " << l+1 << " " <<  k+1 << std::endl;
+            output << std::scientific << std::setprecision(5) << w0( l*qy+m) <<"  "<<lamda[0]* uL.coeff(k*qz+l*qy+m) <<"  "<< w_Derivative_z(k*qz+l*qy+m) <<"  " <<  lamda[0]*uL.coeff(k*qz+l*qy+m) + 2*G[0]*  w_Derivative_z.coeff(k*qz+l*qy+m)  << "   "<< m+1 << " " << l+1 << " " <<  k+1 << std::endl;
         }
     output.close();
 
