@@ -65,19 +65,19 @@ void Construct_f(VectorXd *f, VectorXd * uL)
     Construct_lamda(&lamda, &E, &v);
     Construct_G(&G, &E, &v);
 
-    //заполняем вектор правой части ур я пуассона для каждого слоя
+    //заполняем вектор правой части ур я пуассона
     for (int i = 0; i < qz; i++)
     {
         for (int j = 0; j < qx*qy; j++)
         {
             if ( i > 0  && i < (qz-1) )
-                 f->coeffRef(i*qz+j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy) - uL->coeff(i*qx*qy+j-qx*qy))/2/h;
+                f->coeffRef(i*qy*qx+j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy) - uL->coeff(i*qx*qy+j-qx*qy))/2.0/h;
 
             else if ( i == 0 )
-                        f->coeffRef(i*qz+j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy))/2/h;
+                f->coeffRef(i*qy*qx+j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy))/2.0/h;
 
             else if ( i == (qz-1) )
-                                f->coeffRef(i*qz+j) = ( -G[i] - lamda[i] )/G[i]*(-uL->coeff(i*qx*qy+j-qx*qy))/2/h;
+                f->coeffRef(i*qy*qx+j) = ( -G[i] - lamda[i] )/G[i]*(-uL->coeff(i*qx*qy+j-qx*qy))/2.0/h;
 
         }
     }
@@ -172,19 +172,22 @@ VectorXd Solve_Poisson(VectorXd * uL)
 //считаем производную dw/dz
 void Construct_w_Derivative_z(  VectorXd * w_Derivative_z, VectorXd * w )
 {
+    VectorXd w0(qx*qy); // начальное поле перемещения по Oz
+    Construct_w0(&w0);
+
     w_Derivative_z->fill(0.0);
     for (int i = 0; i < qz; ++i)
     {
         for (int j = 0; j <qx*qy ; ++j)
         {
             if ( i > 0  && i < (qz-1) )
-                w_Derivative_z->coeffRef(i*qz+j) = (w->coeff(i*(qz+1)+j) - w->coeff(i*(qz-1)+j))/2/h;
+                w_Derivative_z->coeffRef(i*qy*qx+j) = (w->coeff(i*(qx*qy)+qx*qy+j) - w->coeff(i*(qx*qy)-qx*qy+j))/2.0/h;
 
             else if ( i == 0 )
-                w_Derivative_z->coeffRef(i*qz+j) = (-w->coeff(i*qz+j))/2/h;
+                w_Derivative_z->coeffRef(i*qy*qx+j) = (w0.coeff(j) - w->coeff(i*qy*qx+j+qx*qy))/2.0/h;
 
             else if ( i == qz-1 )
-                w_Derivative_z->coeffRef(i*qz+j) = (w->coeff(i*qz+j))/2/h;
+                w_Derivative_z->coeffRef(i*qy*qx+j) = (w->coeff(i*qx*qy+j-qx*qy))/2.0/h;
 
         }
     }
