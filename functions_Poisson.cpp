@@ -184,7 +184,7 @@ void Construct_w_Derivative_z(  VectorXd * w_Derivative_z, VectorXd * w )
                 w_Derivative_z->coeffRef(i*qy*qx+j) = (w->coeff(i*(qx*qy)+qx*qy+j) - w->coeff(i*(qx*qy)-qx*qy+j))/2.0/h;
 
             else if ( i == 0 )
-                w_Derivative_z->coeffRef(i*qy*qx+j) = (w0.coeff(j) - w->coeff(i*qy*qx+j+qx*qy))/2.0/h;
+                w_Derivative_z->coeffRef(i*qy*qx+j) = (- w0.coeff(j) + w->coeff(i*qy*qx+j+qx*qy))/2.0/h;
 
             else if ( i == qz-1 )
                 w_Derivative_z->coeffRef(i*qy*qx+j) = (w->coeff(i*qx*qy+j-qx*qy))/2.0/h;
