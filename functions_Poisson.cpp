@@ -103,7 +103,7 @@ void Construct_BC_Poisson(VectorXd *bc)
         {
             if ( (((((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  ) < 1.0) )
             {
-                bc->coeffRef(i*qx+j) =   4.0e7/v[0]/E[0]*(1-v[0])*B*sqrt(1-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
+                bc->coeffRef(i*qx+j) =   4.0e7/v[0]/E[0]*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
 
             }
 
@@ -183,8 +183,9 @@ void Construct_w_Derivative_z(  VectorXd * w_Derivative_z, VectorXd * w )
             if ( i > 0  && i < (qz-1) )
                 w_Derivative_z->coeffRef(i*qy*qx+j) = (w->coeff(i*(qx*qy)+qx*qy+j) - w->coeff(i*(qx*qy)-qx*qy+j))/2.0/h;
 
+
             else if ( i == 0 )
-                w_Derivative_z->coeffRef(i*qy*qx+j) = (- w0.coeff(j) + w->coeff(i*qy*qx+j+qx*qy))/2.0/h;
+                w_Derivative_z->coeffRef(i*qy*qx+j) = ( w->coeff(j+qx*qy) - w0.coeff(j) )/2.0/h;
 
             else if ( i == qz-1 )
                 w_Derivative_z->coeffRef(i*qy*qx+j) = (w->coeff(i*qx*qy+j-qx*qy))/2.0/h;

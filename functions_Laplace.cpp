@@ -30,7 +30,7 @@ void Construct_w0( VectorXd * w0 ) {
         {
             if ( (((((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  ) < 1.0) )
             {
-                w0->coeffRef(i*qx+j) =   4.0e7/v[0]/E[0]*(1-v[0])*B*sqrt(1-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
+                w0->coeffRef(i*qx+j) =   4.0e7/v[0]/E[0]*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
 
             }
 
@@ -105,7 +105,7 @@ void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
 
     for (int i = 1; i < qx * qy -  qx; i++)
     {
-        bc->coeffRef(i) = 2*G[0] / (lamda[0]+2*G[0]) * ( w0->coeff(i-1) - 4*w0->coeff(i) +  w0->coeff(i+1) +   w0->coeff(i-qx) + w0->coeff(i+qx)  )  / h / h  ;
+        bc->coeffRef(i) = 2.0*G[0] / (lamda[0]+2.0*G[0]) * ( w0->coeff(i-1) - 4.0*w0->coeff(i) +  w0->coeff(i+1) +   w0->coeff(i-qx) + w0->coeff(i+qx)  )  / h / h  ;
 
     }
 

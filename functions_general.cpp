@@ -36,7 +36,7 @@ void Construct_lamda(VectorXd * lamda ,VectorXd * E,VectorXd * v)
 {
     for (int i = 0; i < qz; ++i)
     {
-        lamda->coeffRef(i) = E->coeff(i)*v->coeff(i) / (1+v->coeff(i)) / (1-2*v->coeff(i));
+        lamda->coeffRef(i) = E->coeff(i)*v->coeff(i) / (1.0+v->coeff(i)) / (1.0-2.0*v->coeff(i));
     }
 
 
@@ -48,7 +48,7 @@ void Construct_G( VectorXd * G ,VectorXd * E,VectorXd * v  )
 {
     for (int i = 0; i < qz; ++i)
     {
-        G->coeffRef(i) = E->coeff(i) / 2 / (1+v->coeff(i));
+        G->coeffRef(i) = E->coeff(i) / 2.0 / (1.0+v->coeff(i));
     }
 
 }
