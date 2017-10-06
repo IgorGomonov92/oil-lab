@@ -10,6 +10,7 @@
 #include <chrono>
 #include <fstream>
 #include <iomanip>
+#include <math.h>
 
 using namespace Eigen;
 using namespace std::chrono;
@@ -37,12 +38,21 @@ int main(int argc, char **argv) {
     Construct_w_Derivative_z( &w_Derivative_z, &uP);
     Construct_w0(&w0);
 
+
+
     std::ofstream output ("output.txt");
     for (int k = 0; k < qz; ++k)
       for (int l = 0; l < qy; ++l)
         for (int m = 0; m < qx; ++m)
         {
-            output << std::scientific << std::setprecision(5) << uP(k*qx*qy+l*qy+m) <<"  "<<lamda[0]* uL.coeff(k*qx*qy+l*qy+m) <<"  "<< 2.0*G[0]*w_Derivative_z(k*qx*qy+l*qy+m) <<"  " <<  lamda[0]*uL.coeff(k*qx*qy+l*qy+m) + 2.0*G[0]*  w_Derivative_z.coeff(k*qx*qy+l*qy+m)  << "   "<<w0.coeff(l*qy+m)<<" "<< m+1 << " " << l+1 << " " <<  k+1 << std::endl;
+            output << std::scientific << std::setprecision(5);
+            output<<       uP(k*qx*qy+l*qy+m);
+            output<<"  "<< lamda[0]* uL.coeff(k*qx*qy+l*qy+m);
+            output<<"  "<< w_Derivative_z(k*qx*qy+l*qy+m);
+            output<<"  "<< lamda[0]*uL.coeff(k*qx*qy+l*qy+m) + 2.0*G[0]*  w_Derivative_z.coeff(k*qx*qy+l*qy+m);
+            output<<"  "<< w0.coeff(l*qy+m);
+            output<<"  "<< 2.0*( lamda[0]*uL.coeff(k*qx*qy+l*qy+m) + 2.0*G[0]*  w_Derivative_z.coeff(k*qx*qy+l*qy+m) )*sqrt((sqrt(((l-qy/2.0)*(l-qy/2.0))+(m-qx/2.0)*(m-qx/2.0)) -A)/3.14) ;
+            output<<"  "<< m+1 << " " << l+1 << " " <<  k+1 << std::endl;
         }
     output.close();
 
