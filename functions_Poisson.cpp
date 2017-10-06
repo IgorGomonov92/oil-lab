@@ -74,7 +74,7 @@ void Construct_f(VectorXd *f, VectorXd * uL)
                 f->coeffRef(i*qy*qx+j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy) - uL->coeff(i*qx*qy+j-qx*qy))/2.0/h;
 
             else if ( i == 0 )
-                f->coeffRef(i*qy*qx+j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy))/2.0/h;
+                f->coeffRef(i*qy*qx+j) = 0.0;
 
             else if ( i == (qz-1) )
                 f->coeffRef(i*qy*qx+j) = ( -G[i] - lamda[i] )/G[i]*(-uL->coeff(i*qx*qy+j-qx*qy))/2.0/h;
@@ -97,13 +97,14 @@ void Construct_BC_Poisson(VectorXd *bc)
     Construct_lamda(&lamda, &E, &v);
     Construct_G(&G, &E, &v);
 
+
     for (int i = 0; i < qx ; i++)
     {
         for (int j = 0; j < qy ; ++j)
         {
             if ( (((((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  ) < 1.0) )
             {
-                bc->coeffRef(i*qx+j) =   4.0e7/v[0]/E[0]*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
+                bc->coeffRef(i*qx+j) =  4.0e7/v[0]/E[0]*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
 
             }
 
@@ -121,7 +122,7 @@ void Construct_load_Poisson(VectorXd *bP, VectorXd *bcP, VectorXd *f)
     bP->fill(0);
     for (int i = 0; i < qx * qy; i++)
     {
-        bP->coeffRef(i) = - bcP->coeff(i) + f->coeff(i) * h * h;
+        bP->coeffRef(i) = f->coeff(i) * h * h - bcP->coeff(i) ;
     }
 }
 
