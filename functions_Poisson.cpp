@@ -74,7 +74,7 @@ void Construct_f(VectorXd *f, VectorXd * uL)
                 f->coeffRef(i*qy*qx+j) = ( -G[i] - lamda[i] )/G[i]*(uL->coeff(i*qx*qy+j+qx*qy) - uL->coeff(i*qx*qy+j-qx*qy))/2.0/h;
 
             else if ( i == 0 )
-                f->coeffRef(i*qy*qx+j) = 0.0;
+                f->coeffRef(i*qy*qx+j) = (uL->coeff(i*qx*qy+j+2*qx*qy) - 4*uL->coeff(i*qx*qy+j+qx*qy) + 3*(uL->coeff(i*qx*qy+j)))/2.0/h;
 
             else if ( i == (qz-1) )
                 f->coeffRef(i*qy*qx+j) = ( -G[i] - lamda[i] )/G[i]*(-uL->coeff(i*qx*qy+j-qx*qy))/2.0/h;
@@ -104,7 +104,7 @@ void Construct_BC_Poisson(VectorXd *bc)
         {
             if ( (((((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  ) < 1.0) )
             {
-                bc->coeffRef(i*qx+j) =  4.0e7/v[0]/E[0]*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
+                bc->coeffRef(i*qx+j) =  4.0e6/G[0]/3.14*2*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
 
             }
 
@@ -169,6 +169,46 @@ VectorXd Solve_Poisson(VectorXd * uL)
 
 }
 
+VectorXd Solve_Poisson_XX(VectorXd * uL)
+{
+    SpMat AP(n, n);
+    VectorXd bcP(n);
+    VectorXd uP(n); //неизв векторы ур ия Пуассона
+    VectorXd bP(n);
+    VectorXd f(n);
+    VectorXd initGuess(n); // начальное значение для солвера
+
+    Construct_f(&f, uL);
+
+    Construct_guess_P(&initGuess);
+    Construct_matrix_Poisson(&AP);
+   // Construct_BC_Poisson_XX(&bcP);
+    //Construct_load_Poisson_XX(&bP, &bcP, &f);
+
+
+    BiCGSTAB<SparseMatrix<double, RowMajor> > solverP;
+// relative residual error: |Ax-b|/|b|
+    solverP.setTolerance(error);
+    high_resolution_clock::time_point tP1 = high_resolution_clock::now();
+
+
+// раскладываем матрицу
+    solverP.compute(AP);
+// устанавливаем начальное приближение
+    solverP.solveWithGuess(bP, initGuess);
+//запускаем солвер
+    //--------------
+    uP = solverP.solve(bP);
+    //--------------
+    high_resolution_clock::time_point tP2 = high_resolution_clock::now();
+//считаем время решения
+    auto durationP = duration_cast<seconds>(tP2 - tP1).count();
+    std::cout << std::endl <<"Poisson  duration = " << durationP << " || "<<"iterations = " << solverP.iterations()<< std::endl;
+
+    return uP;
+
+}
+
 //--------------------------------------------------------------------------------------
 //считаем производную dw/dz
 void Construct_w_Derivative_z(  VectorXd * w_Derivative_z, VectorXd * w )
@@ -195,3 +235,31 @@ void Construct_w_Derivative_z(  VectorXd * w_Derivative_z, VectorXd * w )
     }
 
 }
+
+//--------------------------------------------------------------------------------------
+//считаем производную dw/dx
+void Construct_w_Derivative_x(  VectorXd * w_Derivative_x, VectorXd * w )
+{
+    VectorXd w0(qx*qy); // начальное поле перемещения по Ox
+    Construct_w0(&w0);
+
+    w_Derivative_x->fill(0.0);
+    for (int i = 0; i < qz; ++i)
+    {
+        for (int j = 0; j <qz*qy ; ++j)
+        {
+            if ( i > 0  && i < (qx-1) )
+                w_Derivative_x->coeffRef(i*qy*qx+j) = (w->coeff(i*(qz*qy)+qz*qy+j) - w->coeff(i*(qz*qy)-qz*qy+j))/2.0/h;
+
+
+            else if ( i == 0 )
+                w_Derivative_x->coeffRef(i*qy*qz+j) = ( w->coeff(j+qz*qy) - w0.coeff(j) )/2.0/h;
+
+            else if ( i == qx-1 )
+                w_Derivative_x->coeffRef(i*qy*qz+j) = (w->coeff(i*qz*qy+j-qz*qy))/2.0/h;
+
+        }
+    }
+
+}
+

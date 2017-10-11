@@ -30,7 +30,7 @@ void Construct_w0( VectorXd * w0 ) {
         {
             if ( (((((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  ) < 1.0) )
             {
-                w0->coeffRef(i*qx+j) =    4.0e7/v[0]/E[0]*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
+                w0->coeffRef(i*qx+j) =    4.0e6/G[0]/3.14*2*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
 
             }
 
@@ -117,7 +117,7 @@ void Construct_BC_Laplace(VectorXd *bc, VectorXd * w0)
 
 void Construct_load_Laplace(VectorXd *b, VectorXd *bc)
 {
-    b->fill(0);
+    b->fill(0.0);
     for (int i = 0; i < qx * qy; i++)
     {
         b->coeffRef(i) = 2 * h * bc->coeff(i);

@@ -20,5 +20,6 @@ void Construct_BC_Poisson(VectorXd * bc);
 void Construct_load_Poisson(VectorXd * b, VectorXd * bc, VectorXd * f);
 VectorXd  Solve_Poisson(VectorXd * uL);
 void Construct_w_Derivative_z(  VectorXd * w_Derivative_z , VectorXd *  w);
+void Construct_w_Derivative_x(  VectorXd * w_Derivative_x , VectorXd *  w);
 
 #endif //FDM_FUNCTIONS_POISSON_H

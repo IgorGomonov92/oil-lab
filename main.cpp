@@ -39,19 +39,20 @@ int main(int argc, char **argv) {
     Construct_w0(&w0);
 
 
-
     std::ofstream output ("output.txt");
+    output << std::scientific << std::setprecision(5);
     for (int k = 0; k < qz; ++k)
       for (int l = 0; l < qy; ++l)
         for (int m = 0; m < qx; ++m)
         {
-            output << std::scientific << std::setprecision(5);
             output<<       uP(k*qx*qy+l*qy+m);
             output<<"  "<< lamda[0]* uL.coeff(k*qx*qy+l*qy+m);
             output<<"  "<< w_Derivative_z(k*qx*qy+l*qy+m);
             output<<"  "<< lamda[0]*uL.coeff(k*qx*qy+l*qy+m) + 2.0*G[0]*  w_Derivative_z.coeff(k*qx*qy+l*qy+m);
             output<<"  "<< w0.coeff(l*qy+m);
-            output<<"  "<< 2.0*( lamda[0]*uL.coeff(k*qx*qy+l*qy+m) + 2.0*G[0]*  w_Derivative_z.coeff(k*qx*qy+l*qy+m) )*sqrt((sqrt(((l-qy/2.0)*(l-qy/2.0))+(m-qx/2.0)*(m-qx/2.0)) -A)/3.14) ;
+
+             if(sqrt((((double)l-qy/2.0)*((double)l-qy/2.0))+((double)m-qx/2.0)*((double)m-qx/2.0)) >= A)
+                output<<"  "<< 4.0e6/3.14*sqrt(A/3.14)/sqrt((sqrt((((double)l-qy/2.0)*((double)l-qy/2.0))+((double)m-qx/2.0)*((double)m-qx/2.0)) -A)) ;
             output<<"  "<< m+1 << " " << l+1 << " " <<  k+1 << std::endl;
         }
     output.close();
