@@ -51,11 +51,14 @@ int main(int argc, char **argv) {
             output<<"  "<< lamda[0]*uL.coeff(k*qx*qy+l*qy+m) + 2.0*G[0]*  w_Derivative_z.coeff(k*qx*qy+l*qy+m);
             output<<"  "<< w0.coeff(l*qy+m);
 
-             if(sqrt((((double)l-qy/2.0)*((double)l-qy/2.0))+((double)m-qx/2.0)*((double)m-qx/2.0)) >= A)
-                output<<"  "<< 4.0e6/3.14*sqrt(A/3.14)/sqrt((sqrt((((double)l-qy/2.0)*((double)l-qy/2.0))+((double)m-qx/2.0)*((double)m-qx/2.0)) -A)) ;
+             if(sqrt((((double)l-qy/2.0)*((double)l-qy/2.0))+((double)m-qx/2.0)*((double)m-qx/2.0)) > A)
+                output<<"  "<< 4.0e6/3.14*sqrt(A/3.14)/sqrt(sqrt((((double)l-qy/2.0)*((double)l-qy/2.0))+((double)m-qx/2.0)*((double)m-qx/2.0)) -A) ;
+             else
+                output<<"  "<< 0.0;
             output<<"  "<< m+1 << " " << l+1 << " " <<  k+1 << std::endl;
         }
     output.close();
+
 
 
     return 0;
