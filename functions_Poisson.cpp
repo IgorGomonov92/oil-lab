@@ -104,7 +104,7 @@ void Construct_BC_Poisson(VectorXd *bc)
         {
             if ( (((((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  ) < 1.0) )
             {
-                bc->coeffRef(i*qx+j) =  4.0e6/G[0]*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
+                bc->coeffRef(i*qx+j) =  4.0e6/G[0]/1.57*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
 
             }
 
@@ -119,7 +119,7 @@ void Construct_BC_Poisson(VectorXd *bc)
 
 void Construct_load_Poisson(VectorXd *bP, VectorXd *bcP, VectorXd *f)
 {
-    bP->fill(0);
+    bP->fill(0.0);
     for (int i = 0; i < qx * qy; i++)
     {
         bP->coeffRef(i) = f->coeff(i) * h * h - bcP->coeff(i) ;
@@ -128,6 +128,46 @@ void Construct_load_Poisson(VectorXd *bP, VectorXd *bcP, VectorXd *f)
 
 //--------------------------------------------------------------------------------------
 
+void Construct_BC_Poisson_XX(VectorXd * bcP)
+{
+    bcP->fill(0.0);
+
+    VectorXd E(qz), v(qz), lamda(qz), G(qz) ; // упругие параметры
+    Construct_E(&E);
+    Construct_v(&v);
+    Construct_lamda(&lamda, &E, &v);
+    Construct_G(&G, &E, &v);
+
+
+    for (int i = 0; i < qx ; i++)
+    {
+        for (int j = 0; j < qy ; ++j)
+        {
+            if ( (((((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  ) < 1.0) )
+            {
+                bcP->coeffRef(i*qx+j) =  4.0e6/G[0]*(1.0-v[0])*B*sqrt(1.0-  (((double)i-(double)qx/2.0)*((double)i-(double)qx/2.0)/A/A + ((double)j-qx/2.0)*((double)j-(double)qx/2.0)/B/B  )  );
+
+            }
+
+        }
+
+    }
+
+}
+
+//--------------------------------------------------------------------------------------
+
+void Construct_load_Poisson_XX(VectorXd * &bP, VectorXd *  &bcP, VectorXd *  &f)
+{
+    bP->fill(0.0);
+    for (int i = 0; i < qx * qy; i++)
+    {
+    bP->coeffRef(i) = f->coeff(i) * h * h - bcP->coeff(i) ;
+    }
+
+}
+
+//--------------------------------------------------------------------------------------
 
 VectorXd Solve_Poisson(VectorXd * uL)
 {
@@ -182,8 +222,8 @@ VectorXd Solve_Poisson_XX(VectorXd * uL)
 
     Construct_guess_P(&initGuess);
     Construct_matrix_Poisson(&AP);
-   // Construct_BC_Poisson_XX(&bcP);
-    //Construct_load_Poisson_XX(&bP, &bcP, &f);
+    Construct_BC_Poisson_XX(&bcP);
+//    Construct_load_Poisson_XX(&bP, &bcP, &f);
 
 
     BiCGSTAB<SparseMatrix<double, RowMajor> > solverP;
